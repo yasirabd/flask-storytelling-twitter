@@ -1,2 +1,2 @@
-# ta-storytelling-twitter-poslda
+# Storytelling Twitter
 Tugas Akhir
