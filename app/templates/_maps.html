@@ -51,9 +51,6 @@ function initMap() {
       document.getElementById('place_name').value = place.name;
       document.getElementById('latitude').value = place.geometry.location.lat();
       document.getElementById('longitude').value = place.geometry.location.lng();
-      // alert(place.geometry.location.lat())
-      // alert(place.geometry.location.lng())
-      // alert(place.name)
     } else {
       map.setCenter(place.geometry.location);
       map.setZoom(17);  // Why 17? Because it looks good.
@@ -73,5 +70,8 @@ function initMap() {
 }
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc3VpBAxqVIwkCvQC1ibFGFnqJbXDmxwE&libraries=places&callback=initMap&language=id" async defer></script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc3VpBAxqVIwkCvQC1ibFGFnqJbXDmxwE&libraries=places&callback=initMap&language=id"
+  async defer>
+</script>
 {% endblock %}

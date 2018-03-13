@@ -11,6 +11,12 @@
   <div style="margin-bottom: 20px;">
     {% include '_maps.html' %}
   </div>
+  <h2>Result Attractions</h2>
+  {% if attractions %}
+    {% for place in attractions.places %}
+      {% include '_attractions.html' %}
+    {% endfor %}
+  {% endif %}
   <h2>Search Tweets</h2>
   {% if form_stweets %}
   <div style="margin-bottom: 20px;">
