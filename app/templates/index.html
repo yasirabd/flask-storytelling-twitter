@@ -2,11 +2,19 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-  {% if form %}
-  <div style="margin-bottom: 30px;">
-    {{ wtf.quick_form(form) }}
+  {% if form_splace %}
+  <h2>Search Tourist Attraction</h2>
+  <div style="margin-bottom: 20px;">
+    {{ wtf.quick_form(form_splace, form_type="inline") }}
   </div>
   {% endif %}
-
-  {% include '_maps.html' %}
+  <div style="margin-bottom: 20px;">
+    {% include '_maps.html' %}
+  </div>
+  <h2>Search Tweets</h2>
+  {% if form_stweets %}
+  <div style="margin-bottom: 20px;">
+    {{ wtf.quick_form(form_stweets) }}
+  </div>
+  {% endif %}
 {% endblock %}
