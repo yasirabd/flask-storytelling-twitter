@@ -7,6 +7,8 @@ from flask_babel import _, lazy_gettext as _l
 class SearchPlaceForm(FlaskForm):
     place = StringField(_l('Place'), validators=[DataRequired()])
     place_name = HiddenField(_l('Place name'), validators=[DataRequired()])
+    lat = HiddenField(_l('Latitude'), validators=[DataRequired()])
+    lng = HiddenField(_l('Longitude'), validators=[DataRequired()])
     search_place = SubmitField(_l('Search'))
 
 

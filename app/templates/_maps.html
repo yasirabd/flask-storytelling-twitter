@@ -14,9 +14,17 @@
 // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
 function initMap() {
+  var userLat = -33.8688;
+  var userLng = 151.2195;
+
+  if ((isNaN(parseFloat($('#lat').val())) && isNaN(parseFloat($('#lng').val()))) == false) {
+    userLat = parseFloat($('#lat').val());
+    userLng = parseFloat($('#lng').val());
+  }
+
   var map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: -33.8688, lng: 151.2195},
-    zoom: 13
+    center: {lat: userLat, lng: userLng},
+    zoom: 11
   });
   var input = document.getElementById('place');
   var autocomplete = new google.maps.places.Autocomplete(input);
@@ -48,6 +56,10 @@ function initMap() {
     // If the place has a geometry, then present it on a map.
     if (place.geometry.viewport) {
       map.fitBounds(place.geometry.viewport);
+      // for search place form
+      document.getElementById('lat').value = place.geometry.location.lat();
+      document.getElementById('lng').value = place.geometry.location.lng();
+      // for search tweets form
       document.getElementById('place_name').value = place.name;
       document.getElementById('latitude').value = place.geometry.location.lat();
       document.getElementById('longitude').value = place.geometry.location.lng();
@@ -60,7 +72,6 @@ function initMap() {
 
     infowindowContent.children['place-icon'].src = place.icon;
     infowindowContent.children['place-name'].textContent = place.name;
-    infowindowContent.children['place-address'].textContent = address;
     infowindow.open(map, marker);
   });
 
