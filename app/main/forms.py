@@ -3,10 +3,12 @@ from wtforms import StringField, SubmitField, HiddenField
 from wtforms.validators import ValidationError, DataRequired
 from flask_babel import _, lazy_gettext as _l
 
+
 class SearchPlaceForm(FlaskForm):
     place = StringField(_l('Place'), validators=[DataRequired()])
     place_name = HiddenField(_l('Place name'), validators=[DataRequired()])
     search_place = SubmitField(_l('Search'))
+
 
 class SearchTweets(FlaskForm):
     latitude = HiddenField(_l('Latitude'), validators=[DataRequired()])

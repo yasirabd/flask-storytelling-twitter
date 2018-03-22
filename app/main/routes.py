@@ -1,12 +1,14 @@
-from app import app
+from app import current_app
 from flask import render_template, url_for, flash
 from flask_googlemaps import Map
-from app.forms import SearchPlaceForm, SearchTweets
 from flask_babel import _
 from googleplaces import GooglePlaces
+from app.main import bp
+from app.main.forms import SearchPlaceForm, SearchTweets
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+
+@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/index', methods=['GET', 'POST'])
 def index():
     form_splace = SearchPlaceForm()
     form_stweets = SearchTweets()
