@@ -1,0 +1,12 @@
+{% if form_stweets %}
+  <form action="" method="post">
+  {{ form_stweets.hidden_tag() }}
+  {% if selected %}
+    {{ selected }}
+  {% else %}
+    <p>zonk</p>
+  {% endif %}
+</form>
+{% else %}
+<p>zong</p>
+{% endif %}

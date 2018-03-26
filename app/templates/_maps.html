@@ -61,8 +61,8 @@ function initMap() {
       document.getElementById('lng').value = place.geometry.location.lng();
       // for search tweets form
       document.getElementById('place_name').value = place.name;
-      document.getElementById('latitude').value = place.geometry.location.lat();
-      document.getElementById('longitude').value = place.geometry.location.lng();
+      // document.getElementById('latitude').value = place.geometry.location.lat();
+      // document.getElementById('longitude').value = place.geometry.location.lng();
     } else {
       map.setCenter(place.geometry.location);
       map.setZoom(17);  // Why 17? Because it looks good.

@@ -3,24 +3,32 @@
 
 {% block app_content %}
   {% if form_splace %}
-  <h2>Search Tourist Attraction</h2>
   <div style="margin-bottom: 20px;">
-    {{ wtf.quick_form(form_splace, form_type="inline") }}
+    {{ wtf.quick_form(form_splace, form_type="inline", action="attractions") }}
   </div>
   {% endif %}
   <div style="margin-bottom: 20px;">
     {% include '_maps.html' %}
   </div>
-  <h2>Result Attractions</h2>
-  {% if attractions %}
-    {% for place in attractions.places %}
-      {% include '_attractions.html' %}
-    {% endfor %}
-  {% endif %}
-  <h2>Search Tweets</h2>
   {% if form_stweets %}
   <div style="margin-bottom: 20px;">
-    {{ wtf.quick_form(form_stweets) }}
+    <div class="row">
+      <div class="col-md-12">
+        <form method="post" action="{{ url_for('main.crawl') }}">
+          {{ form_stweets.hidden_tag() }}
+          <div class="form-group">
+            {{ render_field(form_stweets.multi_attractions) }}
+          </div>
+          <div class="form-group">
+            {{ render_field(form_stweets.range_dist, class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ render_field(form_stweets.days_before, class="form-control") }}
+          </div>
+          {{ wtf.form_field(form_stweets.submit) }}
+        </form>
+      </div>
+    </div>
   </div>
   {% endif %}
 {% endblock %}
