@@ -1,10 +1,13 @@
-from app import current_app
-from flask import render_template, url_for, session, redirect
+from app import current_app as app
+from flask import render_template, url_for, session, redirect, make_response
 from flask_googlemaps import Map
 from flask_babel import _
 from googleplaces import GooglePlaces
+import pandas as pd
+from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
+from ..modules.crawler import TwitterCrawler
 from app._helpers import flash_errors
 
 
@@ -41,8 +44,10 @@ def attractions():
         form_stweets.multi_attractions.choices =  [(att, att) for att in list_attractions]
         form_stweets.latitude.data = form_splace.lat.data
         form_stweets.longitude.data = form_splace.lng.data
+        form_stweets.place.data = place_name
     return render_template('index.html', form_splace=form_splace,
                             form_stweets=form_stweets)
+
 
 @bp.route('/crawl', methods=['GET', 'POST'])
 def crawl():
@@ -50,9 +55,25 @@ def crawl():
     form_splace = SearchPlaceForm()
     form_stweets = SearchTweetsForm(obj=selectedChoices)
 
+    twitter_crawler = TwitterCrawler(app)
+
     if form_stweets.validate_on_submit():
         session['selected'] = form_stweets.multi_attractions.data
-        return render_template('result.html', form_stweets=form_stweets, selected=session.get('selected'))
+        attractions = session.get('selected')
+        days_before = form_stweets.days_before.data
+        latitude = form_stweets.latitude.data
+        longitude = form_stweets.longitude.data
+        max_range = form_stweets.range_dist.data
+        place_name = form_stweets.place.data
+
+        df_attractions = twitter_crawler.fetch_tweets_from_attractions(attractions, int(days_before), float(latitude),
+                                                                       float(longitude), int(max_range), place_name)
+        response = make_response(df_attractions.to_csv(index=False, columns=['user_id', 'username', 'created_at', 'latitude', 'longitude', 'text']))
+        response.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        response.mimetype='text/csv'
+
+        return response
+        # return render_template('result.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
 
     flash_errors(form_stweets)
     return render_template('index.html', form_splace=form_splace,

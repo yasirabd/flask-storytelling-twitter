@@ -30,6 +30,7 @@ class SelectMultipleAttractions(SelectMultipleField):
 
 
 class SearchTweetsForm(FlaskForm):
+    place = HiddenField(_l('Place'), validators=[DataRequired()])
     latitude = HiddenField(_l('Latitude'), validators=[DataRequired()])
     longitude = HiddenField(_l('Longitude'), validators=[DataRequired()])
     multi_attractions = SelectMultipleAttractions('Attractions', choices=[], validators=[InputRequired()])

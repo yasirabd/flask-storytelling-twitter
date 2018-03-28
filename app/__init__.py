@@ -15,7 +15,8 @@ googlemaps = GoogleMaps()
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(Config)
-
+    Config.init_app(app)
+    
     bootstrap.init_app(app)
     babel.init_app(app)
     googlemaps.init_app(app)

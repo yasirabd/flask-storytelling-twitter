@@ -14,17 +14,19 @@
 // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
 function initMap() {
-  var userLat = -33.8688;
-  var userLng = 151.2195;
+  var userLat = -0.789275;
+  var userLng = 113.921327;
+  var userZoom = 4;
 
   if ((isNaN(parseFloat($('#lat').val())) && isNaN(parseFloat($('#lng').val()))) == false) {
     userLat = parseFloat($('#lat').val());
     userLng = parseFloat($('#lng').val());
+    userZoom = 11;
   }
 
   var map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: userLat, lng: userLng},
-    zoom: 11
+    zoom: userZoom
   });
   var input = document.getElementById('place');
   var autocomplete = new google.maps.places.Autocomplete(input);
@@ -61,8 +63,6 @@ function initMap() {
       document.getElementById('lng').value = place.geometry.location.lng();
       // for search tweets form
       document.getElementById('place_name').value = place.name;
-      // document.getElementById('latitude').value = place.geometry.location.lat();
-      // document.getElementById('longitude').value = place.geometry.location.lng();
     } else {
       map.setCenter(place.geometry.location);
       map.setZoom(17);  // Why 17? Because it looks good.
