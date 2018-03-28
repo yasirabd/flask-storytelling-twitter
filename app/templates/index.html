@@ -2,6 +2,8 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+<div id="loading"></div>
+<div id="content">
   {% if form_splace %}
   <div style="margin-bottom: 20px;">
     {{ wtf.quick_form(form_splace, form_type="inline", action="attractions") }}
@@ -25,10 +27,51 @@
           <div class="form-group">
             {{ render_field(form_stweets.days_before, class="form-control") }}
           </div>
-          {{ wtf.form_field(form_stweets.submit) }}
+          <button type="submit" class="btn btn-primary" id="btn">Get Tweets</button>
+          <div class="spinner" id="spinner" style="display: none">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+          </div>
+          <!-- {{ wtf.form_field(form_stweets.submit) }} -->
         </form>
       </div>
     </div>
   </div>
   {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+function crawl_call() {
+  // hide button and make the spinner appear
+  $('#btn').toggle();
+  $('#spinner').toggle();
+  $.ajax({
+    url: "http://127.0.0.1:5000/crawl",
+    method: 'POST',
+    headers: {
+       Accept : "text/csv; charset=utf-8",
+       "Content-Type": "text/csv; charset=utf-8"
+    },
+    success: function( data, textStatus, jQxhr ){
+      // toggle the spinner and button
+      $('#btn').toggle();
+      $('#spinner').toggle();
+    },
+    error: function( jqXhr, textStatus, errorThrown ){
+      $('#btn').toggle();
+      $('#spinner').toggle();
+      console.log( errorThrown );
+    },
+    timeout: 10000 // sets timeout to 10 seconds
+  });
+}
+$( document ).ready(function() {
+  // request when clicking on the button
+  $('#btn').click(function() {
+    crawl_call();
+  });
+});
+</script>
 {% endblock %}
