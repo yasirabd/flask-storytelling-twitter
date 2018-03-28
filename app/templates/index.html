@@ -6,7 +6,7 @@
 <div id="content">
   {% if form_splace %}
   <div style="margin-bottom: 20px;">
-    {{ wtf.quick_form(form_splace, form_type="inline", action="attractions") }}
+    {{ wtf.quick_form(form_splace, form_type="inline", action="attractions", button_map={'search_place':'default'}) }}
   </div>
   {% endif %}
   <div style="margin-bottom: 20px;">
@@ -19,7 +19,7 @@
         <form method="post" action="{{ url_for('main.crawl') }}">
           {{ form_stweets.hidden_tag() }}
           <div class="form-group">
-            {{ render_field(form_stweets.multi_attractions) }}
+            {{ render_mutiple_checkbox_field(form_stweets.multi_attractions) }}
           </div>
           <div class="form-group">
             {{ render_field(form_stweets.range_dist, class="form-control") }}

@@ -4,6 +4,7 @@ from flask_googlemaps import Map
 from flask_babel import _
 from googleplaces import GooglePlaces
 import pandas as pd
+import time
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
@@ -27,7 +28,7 @@ def attractions():
     form_splace = SearchPlaceForm()
     form_stweets = SearchTweetsForm(obj=selectedChoices)
 
-    attractions = None
+    attractions, attractions_next_page, attractions_next_page2 = None, None, None
     list_attractions = ()
     GOOGLEMAPS_KEY = "AIzaSyCc3VpBAxqVIwkCvQC1ibFGFnqJbXDmxwE"
     google_places = GooglePlaces(GOOGLEMAPS_KEY)
@@ -35,10 +36,26 @@ def attractions():
         place_name = form_splace.place_name.data
         attractions = google_places.text_search(query=place_name+' tourist attractions',
                                                 language='id')
+        # if have more than 20
+        if attractions.has_next_page_token:
+            time.sleep(2)
+            attractions_next_page = google_places.text_search(pagetoken=attractions.next_page_token)
+
+            # if more have than 40
+            if attractions_next_page.has_next_page_token:
+                time.sleep(2)
+                attractions_next_page2 = google_places.text_search(pagetoken=attractions_next_page.next_page_token)
+
         if attractions:
             la = list(list_attractions)
             for place in attractions.places:
                 la.append(place.name)
+            if attractions_next_page:
+                for place in attractions_next_page.places:
+                    la.append(place.name)
+            if attractions_next_page2:
+                for place in attractions_next_page2.places:
+                    la.append(place.name)
             list_attractions = tuple(la)
 
         form_stweets.multi_attractions.choices =  [(att, att) for att in list_attractions]

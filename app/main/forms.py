@@ -9,7 +9,7 @@ class SearchPlaceForm(FlaskForm):
     place_name = HiddenField(_l('Place name'), validators=[DataRequired()])
     lat = HiddenField(_l('Latitude'), validators=[DataRequired()])
     lng = HiddenField(_l('Longitude'), validators=[DataRequired()])
-    search_place = SubmitField(_l('Search'))
+    search_place = SubmitField(_l('Get Attractions'))
 
 
 class ChoiceObj(object):

@@ -1,6 +1,17 @@
 {% macro render_field(field) %}
   <dt style="word-wrap: brea-word;">{{ field.label }}<span class="error-red">{% if field.flags.required %}*{% endif %}</span></dt>
-  <dd style="padding: 5px">{{ field(**kwargs)|safe }}
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    {% for error in field.errors %}
+      <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+{% macro render_mutiple_checkbox_field(field) %}
+  <dt style="word-wrap: brea-word;">{{ field.label }}<span class="error-red">{% if field.flags.required %}*{% endif %}</span></dt>
+  <dd style="padding: 15px 15px 15px 25px;">{{ field(**kwargs)|safe }}
   {% if field.errors %}
     {% for error in field.errors %}
       <span style="color: red;">{{ error }}</span>
