@@ -4,6 +4,9 @@ from wtforms.validators import ValidationError, DataRequired, InputRequired
 from flask_babel import _, lazy_gettext as _l
 
 
+RANGES = [('70', '70'), ('90', '90'), ('110', '110'), ('130', '130')]
+DAYS = [('5', '5'), ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'), ('10', '10'), ('11', '11')]
+
 class SearchPlaceForm(FlaskForm):
     place = StringField(_l('Place'), validators=[DataRequired()])
     place_name = HiddenField(_l('Place name'), validators=[DataRequired()])
@@ -34,6 +37,6 @@ class SearchTweetsForm(FlaskForm):
     latitude = HiddenField(_l('Latitude'), validators=[DataRequired()])
     longitude = HiddenField(_l('Longitude'), validators=[DataRequired()])
     multi_attractions = SelectMultipleAttractions('Attractions', choices=[], validators=[InputRequired()])
-    range_dist = StringField(_l('Range distance'), validators=[DataRequired()])
-    days_before = StringField(_l('Days before'), validators=[DataRequired()])
+    range_dist = SelectField(_l('Range distance (Km)'), choices=RANGES, validators=[DataRequired()])
+    days_before = SelectField(_l('Days before'), choices=DAYS, validators=[DataRequired()])
     submit = SubmitField(_l('Crawl Tweets'))
