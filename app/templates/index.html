@@ -9,32 +9,29 @@
     {{ wtf.quick_form(form_splace, form_type="inline", action="attractions", button_map={'search_place':'default'}) }}
   </div>
   {% endif %}
-  <div style="margin-bottom: 20px;">
-    {% include '_maps.html' %}
-  </div>
   {% if form_stweets %}
-  <div style="margin-bottom: 20px;">
-    <div class="row">
-      <div class="col-md-12">
-        <form method="post" action="{{ url_for('main.crawl') }}">
-          {{ form_stweets.hidden_tag() }}
-          <div class="form-group">
-            {{ render_mutiple_checkbox_field(form_stweets.multi_attractions) }}
-          </div>
-          <div class="form-group">
-            {{ render_field(form_stweets.range_dist, class="form-control") }}
-          </div>
-          <div class="form-group">
-            {{ render_field(form_stweets.days_before, class="form-control") }}
-          </div>
-          <button type="submit" class="btn btn-primary" id="btn">Get Tweets</button>
-          <div class="spinner" id="spinner" style="display: none">
-            <div class="double-bounce1"></div>
-            <div class="double-bounce2"></div>
-          </div>
-          <!-- {{ wtf.form_field(form_stweets.submit) }} -->
-        </form>
-      </div>
+  <div class="row">
+    <div class="col-md-4">
+      <form method="post" action="{{ url_for('main.crawl') }}">
+        {{ form_stweets.hidden_tag() }}
+        <div class="form-group pre-scrollable" style="max-height: 42vh;">
+          {{ render_mutiple_checkbox_field(form_stweets.multi_attractions) }}
+        </div>
+        <div class="form-group">
+          {{ render_field(form_stweets.range_dist, class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ render_field(form_stweets.days_before, class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn">Get Stories</button>
+        <div class="spinner" id="spinner" style="display: none">
+          <div class="double-bounce1"></div>
+          <div class="double-bounce2"></div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-8">
+      {% include '_maps.html' %}
     </div>
   </div>
   {% endif %}
@@ -51,8 +48,8 @@ function crawl_call() {
     url: "http://127.0.0.1:5000/crawl",
     method: 'POST',
     headers: {
-       Accept : "text/csv; charset=utf-8",
-       "Content-Type": "text/csv; charset=utf-8"
+      Accept : "text/csv; charset=utf-8",
+      "Content-Type": "text/csv; charset=utf-8"
     },
     success: function( data, textStatus, jQxhr ){
       // toggle the spinner and button

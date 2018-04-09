@@ -89,8 +89,8 @@ def crawl():
         response.headers["Content-Disposition"] = "attachment; filename=export.csv"
         response.mimetype='text/csv'
 
-        return response
-        # return render_template('result.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
+        # return response
+        return render_template('result.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
 
     flash_errors(form_stweets)
     return render_template('index.html', form_splace=form_splace,
