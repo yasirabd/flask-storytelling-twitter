@@ -13,7 +13,10 @@ class Config(object):
     TWITTER_ACCESS_TOKEN = os.getenv('TWITTER_ACCESS_TOKEN')
     TWITTER_ACCESS_SECRET = os.getenv('TWITTER_ACCESS_SECRET')
     TEMPLATES_AUTO_RELOAD = True
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(basedir, 'app.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    @staticmethod
-    def init_app(app):
-        pass
+    # @staticmethod
+    # def init_app(app):
+    #     pass

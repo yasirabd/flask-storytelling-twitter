@@ -5,8 +5,13 @@ from flask import Flask, current_app
 from flask_bootstrap import Bootstrap
 from flask_babel import Babel
 from flask_googlemaps import GoogleMaps
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from config import Config
 
+
+db = SQLAlchemy()
+migrate = Migrate()
 bootstrap = Bootstrap()
 babel = Babel()
 googlemaps = GoogleMaps()
@@ -14,9 +19,11 @@ googlemaps = GoogleMaps()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    app.config.from_object(Config)
-    Config.init_app(app)
-    
+    app.config.from_object(config_class)
+    # Config.init_app(app)
+
+    db.init_app(app)
+    migrate.init_app(app, db)
     bootstrap.init_app(app)
     babel.init_app(app)
     googlemaps.init_app(app)
@@ -42,3 +49,6 @@ def create_app(config_class=Config):
         app.logger.info('Storytelling twitter startup')
 
     return app
+
+
+from app import models
