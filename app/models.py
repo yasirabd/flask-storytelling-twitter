@@ -1,11 +1,10 @@
 from app import db
 from flask import current_app
-from datetime import datetime
 
 
 class Crawler(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, index=True)
     tweets = db.relationship('Tweet', backref='crawler', lazy='dynamic')
 
     def __repr__(self):

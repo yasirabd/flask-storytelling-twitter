@@ -1,13 +1,16 @@
-from app import current_app as app
+from app import db
+from flask import current_app
 from flask import render_template, url_for, session, redirect, make_response
 from flask_googlemaps import Map
 from flask_babel import _
 from googleplaces import GooglePlaces
 import pandas as pd
 import time
+from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
+from app.models import Crawler, Tweet
 from ..modules.crawler import TwitterCrawler
 from app._helpers import flash_errors
 
@@ -41,7 +44,7 @@ def attractions():
             time.sleep(2)
             attractions_next_page = google_places.text_search(pagetoken=attractions.next_page_token)
 
-            # if more have than 40
+            # if have more than 40
             if attractions_next_page.has_next_page_token:
                 time.sleep(2)
                 attractions_next_page2 = google_places.text_search(pagetoken=attractions_next_page.next_page_token)
@@ -72,7 +75,7 @@ def crawl():
     form_splace = SearchPlaceForm()
     form_stweets = SearchTweetsForm(obj=selectedChoices)
 
-    twitter_crawler = TwitterCrawler(app)
+    twitter_crawler = TwitterCrawler(current_app)
 
     if form_stweets.validate_on_submit():
         session['selected'] = form_stweets.multi_attractions.data
@@ -85,12 +88,32 @@ def crawl():
 
         df_attractions = twitter_crawler.fetch_tweets_from_attractions(attractions, int(days_before), float(latitude),
                                                                        float(longitude), int(max_range), place_name)
-        response = make_response(df_attractions.to_csv(index=False, columns=['user_id', 'username', 'created_at', 'latitude', 'longitude', 'text']))
-        response.headers["Content-Disposition"] = "attachment; filename=export.csv"
-        response.mimetype='text/csv'
 
-        return response
-        # return render_template('result.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
+        # insert into crawler table
+        crawler = Crawler()
+        crawler.timestamp = datetime.utcnow()
+        db.session.add(crawler)
+        db.session.commit()
+
+        # insert into tweet table
+        for _, row in df_attractions.iterrows():
+            tweet = Tweet()
+            tweet.user_id = row['user_id']
+            tweet.username = row['username']
+            tweet.created = row['created_at']
+            tweet.text = row['text']
+            tweet.latitude = row['latitude']
+            tweet.longitude = row['longitude']
+            tweet.crawler_id = crawler.id
+            db.session.add(tweet)
+            db.session.commit()
+
+        # response = make_response(df_attractions.to_csv(index=False, columns=['user_id', 'username', 'created_at', 'latitude', 'longitude', 'text']))
+        # response.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        # response.mimetype='text/csv'
+        #
+        # return response
+        return render_template('result.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
 
     flash_errors(form_stweets)
     return render_template('index.html', form_splace=form_splace,
