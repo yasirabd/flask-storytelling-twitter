@@ -12,7 +12,7 @@
   {% if form_stweets %}
   <div class="row">
     <div class="col-md-4">
-      <form method="post" action="{{ url_for('main.crawl') }}">
+      <form method="post" action="{{ url_for('main.stories') }}">
         {{ form_stweets.hidden_tag() }}
         <div class="form-group pre-scrollable" style="max-height: 42vh;">
           {{ render_mutiple_checkbox_field(form_stweets.multi_attractions) }}

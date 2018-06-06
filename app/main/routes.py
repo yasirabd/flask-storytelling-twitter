@@ -69,6 +69,11 @@ def attractions():
                             form_stweets=form_stweets)
 
 
+@bp.route('/stories', methods=['GET', 'POST'])
+def stories():
+    return render_template('stories.html')
+
+
 @bp.route('/crawl', methods=['GET', 'POST'])
 def crawl():
     selectedChoices = ChoiceObj('attractions', session.get('selected'))
@@ -113,7 +118,7 @@ def crawl():
         # response.mimetype='text/csv'
         #
         # return response
-        return render_template('result.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
+        return render_template('crawling.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
 
     flash_errors(form_stweets)
     return render_template('index.html', form_splace=form_splace,

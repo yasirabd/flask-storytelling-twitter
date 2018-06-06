@@ -3,6 +3,7 @@ from flask import current_app
 
 
 class Crawler(db.Model):
+    __tablename__ = 'crawler'
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True)
     tweets = db.relationship('Tweet', backref='crawler', lazy='dynamic')
@@ -12,6 +13,7 @@ class Crawler(db.Model):
 
 
 class Tweet(db.Model):
+    __tablename__ = 'tweet'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.String(50))
     username = db.Column(db.String(50))
