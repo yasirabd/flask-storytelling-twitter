@@ -7,6 +7,7 @@
 {% block head %}
 {{super()}}
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='process.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto Mono" rel='stylesheet'>
 <script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
@@ -90,7 +91,6 @@
           </table>
         </div>
         <p>Berdasarkan data masukan sebelumnya, berikut ini adalah masukannya.</p>
-
         <form id="form_crawling">
         <div class="table-responsive">
           <table class="table table-bordered">
@@ -150,7 +150,7 @@
             </tbody>
           </table>
         </div>
-        <input type="submit" class="btn btn-primary" value="Lakukan Crawling">
+        <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses Crawling" id="btnCrawling">Lakukan Crawling</button>
         <a href="{{url_for('main.index')}}" class="btn btn-link">Kembali*</a>
         <h5><small>*Jika menekan <span class="text-danger">Kembali</span>, akan mengulangi langkah dari awal.</small></h5>
         </form>
@@ -242,6 +242,7 @@ function gantiStatus() {
 
 function getCrawling(ev) {
   ev.preventDefault();
+  $("#btnCrawling").button('loading');
   $.ajax({
     method: 'POST',
     url: {{ url_for('main.crawl')|tojson }},
@@ -260,6 +261,10 @@ function getCrawling(ev) {
 function getCrawlingShow(data) {
   $('#status_crawling').text(data.status_crawling);
   gantiStatus();
+  $("#btnCrawling").button('reset');
+  setTimeout(function () {
+    $("#btnCrawling").prop("disabled", true);
+  }, 0);
 }
 
 $('#form_crawling').on('submit', getCrawling);
