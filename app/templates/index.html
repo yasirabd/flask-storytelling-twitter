@@ -12,7 +12,7 @@
   {% if form_stweets %}
   <div class="row">
     <div class="col-md-4">
-      <form method="post" action="{{ url_for('main.stories') }}">
+      <form method="post" action="{{ url_for('main.process') }}">
         {{ form_stweets.hidden_tag() }}
         <div class="form-group pre-scrollable" style="max-height: 42vh;">
           {{ render_mutiple_checkbox_field(form_stweets.multi_attractions) }}
@@ -23,11 +23,9 @@
         <div class="form-group">
           {{ render_field(form_stweets.days_before, class="form-control") }}
         </div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn">Get Stories</button>
-        <div class="spinner" id="spinner" style="display: none">
-          <div class="double-bounce1"></div>
-          <div class="double-bounce2"></div>
-        </div>
+        <button class="btn btn-primary btn-block btn-lg" data-toggle="modal" data-target="#demo-modal-2">
+          Get Stories
+        </button>
       </form>
     </div>
     <div class="col-md-8">
@@ -36,39 +34,4 @@
   </div>
   {% endif %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script type="text/javascript">
-function crawl_call() {
-  // hide button and make the spinner appear
-  $('#btn').toggle();
-  $('#spinner').toggle();
-  $.ajax({
-    url: "http://127.0.0.1:5000/crawl",
-    method: 'POST',
-    headers: {
-      Accept : "text/csv; charset=utf-8",
-      "Content-Type": "text/csv; charset=utf-8"
-    },
-    success: function( data, textStatus, jQxhr ){
-      // toggle the spinner and button
-      $('#btn').toggle();
-      $('#spinner').toggle();
-    },
-    error: function( jqXhr, textStatus, errorThrown ){
-      $('#btn').toggle();
-      $('#spinner').toggle();
-      console.log( errorThrown );
-    },
-    timeout: 10000 // sets timeout to 10 seconds
-  });
-}
-$( document ).ready(function() {
-  // request when clicking on the button
-  $('#btn').click(function() {
-    crawl_call();
-  });
-});
-</script>
 {% endblock %}

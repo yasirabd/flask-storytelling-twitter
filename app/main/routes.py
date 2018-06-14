@@ -1,6 +1,6 @@
 from app import db
 from flask import current_app
-from flask import render_template, url_for, session, redirect, make_response
+from flask import render_template, url_for, session, redirect, make_response, jsonify, request
 from flask_googlemaps import Map
 from flask_babel import _
 from googleplaces import GooglePlaces
@@ -69,57 +69,63 @@ def attractions():
                             form_stweets=form_stweets)
 
 
-@bp.route('/stories', methods=['GET', 'POST'])
-def stories():
-    return render_template('stories.html')
-
-
-@bp.route('/crawl', methods=['GET', 'POST'])
-def crawl():
+@bp.route('/process', methods=['GET', 'POST'])
+def process():
     selectedChoices = ChoiceObj('attractions', session.get('selected'))
     form_splace = SearchPlaceForm()
     form_stweets = SearchTweetsForm(obj=selectedChoices)
-
-    twitter_crawler = TwitterCrawler(current_app)
+    input_crawling = {}
 
     if form_stweets.validate_on_submit():
         session['selected'] = form_stweets.multi_attractions.data
-        attractions = session.get('selected')
-        days_before = form_stweets.days_before.data
+        place_name = form_stweets.place.data
         latitude = form_stweets.latitude.data
         longitude = form_stweets.longitude.data
-        max_range = form_stweets.range_dist.data
-        place_name = form_stweets.place.data
+        attractions = session.get('selected')
+        range_dist = form_stweets.range_dist.data
+        days_before = form_stweets.days_before.data
 
-        df_attractions = twitter_crawler.fetch_tweets_from_attractions(attractions, int(days_before), float(latitude),
-                                                                       float(longitude), int(max_range), place_name)
+        input_crawling = {'place_name': place_name,
+                          'latitude': latitude,
+                          'longitude': longitude,
+                          'attractions': attractions,
+                          'range_dist': range_dist,
+                          'days_before': days_before}
 
-        # insert into crawler table
-        crawler = Crawler()
-        crawler.timestamp = datetime.utcnow()
-        db.session.add(crawler)
+    return render_template('process.html', form_stweets=form_stweets, input_crawling=input_crawling)
+
+
+@bp.route('/process/crawl', methods=['GET', 'POST'])
+def crawl():
+    place_name = request.form.get('place_name')
+    latitude = request.form.get('latitude')
+    longitude = request.form.get('longitude')
+    attractions = request.form.getlist('attractions[]')
+    range_dist = request.form.get('range_dist')
+    days_before = request.form.get('days_before')
+
+
+    twitter_crawler = TwitterCrawler(current_app)
+    df_attractions = twitter_crawler.fetch_tweets_from_attractions(attractions, int(days_before), float(latitude),
+                                                                   float(longitude), int(range_dist), place_name)
+
+    # insert into crawler table
+    crawler = Crawler()
+    crawler.timestamp = datetime.utcnow()
+    db.session.add(crawler)
+    db.session.commit()
+
+    # insert into tweet table
+    for _, row in df_attractions.iterrows():
+        tweet = Tweet()
+        tweet.user_id = row['user_id']
+        tweet.username = row['username']
+        tweet.created = row['created_at']
+        tweet.text = row['text']
+        tweet.latitude = row['latitude']
+        tweet.longitude = row['longitude']
+        tweet.crawler_id = crawler.id
+        db.session.add(tweet)
         db.session.commit()
 
-        # insert into tweet table
-        for _, row in df_attractions.iterrows():
-            tweet = Tweet()
-            tweet.user_id = row['user_id']
-            tweet.username = row['username']
-            tweet.created = row['created_at']
-            tweet.text = row['text']
-            tweet.latitude = row['latitude']
-            tweet.longitude = row['longitude']
-            tweet.crawler_id = crawler.id
-            db.session.add(tweet)
-            db.session.commit()
-
-        # response = make_response(df_attractions.to_csv(index=False, columns=['user_id', 'username', 'created_at', 'latitude', 'longitude', 'text']))
-        # response.headers["Content-Disposition"] = "attachment; filename=export.csv"
-        # response.mimetype='text/csv'
-        #
-        # return response
-        return render_template('crawling.html', form_stweets=form_stweets, selected=session.get('selected'), place=place_name)
-
-    flash_errors(form_stweets)
-    return render_template('index.html', form_splace=form_splace,
-                            form_stweets=form_stweets, selected=session.get('selected'))
+    return jsonify(status_crawling="success")

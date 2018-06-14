@@ -19,26 +19,26 @@ class TwitterCrawler:
         self.__CONSUMER_SECRET = app.config['TWITTER_CONSUMER_SECRET']
         self.__auth = tweepy.OAuthHandler(self.__CONSUMER_KEY, self.__CONSUMER_SECRET)
         self.__auth.set_access_token(self.__ACCESS_TOKEN, self.__ACCESS_SECRET)
-        self.__api = tweepy.API(self.__auth)
+        self.__api = tweepy.API(self.__auth, wait_on_rate_limit=True)
 
 
-    def fetch_tweets_from_attractions(self, attractions, days_before, latitude, longitude, max_range, place_name):
+    def fetch_tweets_from_attractions(self, attractions, days_before, latitude, longitude, range_dist, place_name):
         df_attractions = pd.DataFrame({'user_id': [], 'username': [], 'created_at': [], 'latitude': [], 'longitude': [], 'text': []})
         for att in attractions:
             query = self.generate_query(att, place_name)
-            df_tweet = self.fetch_tweets(query, days_before, latitude, longitude, max_range)
+            df_tweet = self.fetch_tweets(query, days_before, latitude, longitude, range_dist)
             df_attractions = df_attractions.append(df_tweet, ignore_index=True)
 
         return df_attractions
 
 
-    def fetch_tweets(self, query, days_before, latitude, longitude, max_range):
+    def fetch_tweets(self, query, days_before, latitude, longitude, range_dist):
         now = datetime.today()
         date_before = now - timedelta(days=days_before)
         df_tweet = pd.DataFrame({'user_id': [], 'username': [], 'created_at': [], 'latitude': [], 'longitude': [], 'text': []})
 
         c = tweepy.Cursor(self.__api.search, q=query, tweet_mode='extended',
-                          geocode = "%f,%f,%dkm" % (latitude, longitude, max_range)).items()
+                          geocode = "%f,%f,%dkm" % (latitude, longitude, range_dist)).items()
         while True:
             try:
                 tweet = c.next()

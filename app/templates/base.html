@@ -9,7 +9,7 @@
 {% block head %}
 {{super()}}
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
-<script type="text/javascript" src="{{url_for('static', filename='jquery-1.9.1.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
 {% endblock %}
 
 {% block navbar %}
@@ -24,7 +24,7 @@
       </button>
       <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ _('Storytelling Twitter') }}</a>
     </div>
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
         <li><a href="{{ url_for('main.index') }}">{{ _('Home') }}</a></li>
       </ul>

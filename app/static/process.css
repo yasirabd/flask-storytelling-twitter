@@ -1,0 +1,57 @@
+body {
+	padding-top:50px;
+}
+
+.navbar-bright {
+	background-color:#111155;
+    color:#fff;
+}
+
+.navbar-bright a {
+  	color:#aaaacc;
+}
+
+.navbar-bright li > a:hover {
+    background-color:#000033;
+}
+
+.affix-top,.affix{
+	position: static;
+}
+
+@media (min-width: 979px) {
+  #sidebar.affix-top {
+    position: static;
+  	margin-top:20px;
+  	width:228px;
+  }
+
+  #sidebar.affix-bottom {
+    position: relative;
+  }
+
+  #sidebar.affix {
+    position: fixed;
+    top:70px;
+    width:228px;
+  }
+}
+
+#sidebar li.active {
+  	border:0 #eee solid;
+  	border-right-width:4px;
+}
+
+#sidebar li li.active {
+  	border:0 #ccc solid;
+  	border-right-width:3px;
+}
+
+.anchor {
+  padding-top: 75px;
+  margin-top: -75px;
+}
+
+.code {
+  font-family: 'Roboto Mono';
+}

@@ -1,0 +1,268 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+{{ _('Storytelling Twitter') }}
+{% endblock %}
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='process.css')}}">
+<link href="https://fonts.googleapis.com/css?family=Roboto Mono" rel='stylesheet'>
+<script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ _('Storytelling Twitter') }}</a>
+    </div>
+    <div class="collapse navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('main.index') }}">{{ _('Home') }}</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-3" id="leftCol">
+      <ol class="nav nav-stacked" id="sidebar">
+        <h3>Steps</h3>
+        <li class="active"><a href="#crawling">1. Crawling <span id="stat_crawling_sidebar" class="text-danger">(Belum)</span></a></li>
+        <li><a href="#preprocessing">2. Preprocessing</a></li>
+        <li><a href="#tagging">3. Tagging</a></li>
+        <li><a href="#lda">4. Latent Dirichlet Allocation (LDA)</a></li>
+        <li><a href="#grammar">5. Grammar Story</a></li>
+        <li><a href="#final">6. Final Result</a></li>
+      </ol>
+    </div>
+    <div class="col-md-9">
+      <p>
+        <hr>
+        {% if form_stweets %}
+        <h2 id="crawling" class="anchor">1. Crawling <span id="stat_crawling_header" class="text-danger">(Belum)</span></h2>
+        Proses mendapatkan data <i>tweet</i> dari Twitter. Berikut adalah data masukan yang digunakan.
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="code">place_name</td>
+                <td>Nama lokasi dari pengguna Twitter yang men-tweet</td>
+              </tr>
+              <tr>
+                <td class="code">latitude</td>
+                <td>Latitude dari lokasi</td>
+              </tr>
+              <tr>
+                <td class="code">longitude</td>
+                <td>Longitude dari lokasi</td>
+              </tr>
+              <tr>
+                <td class="code">attractions</td>
+                <td>Tempat-tempat <i>attractions</i> yang di sekitar lokasi</td>
+              </tr>
+              <tr>
+                <td class="code">range_dist</td>
+                <td>Jarak radius dalam Km bagi pengguna Twitter</td>
+              </tr>
+              <tr>
+                <td class="code">days_before</td>
+                <td>Usia lama tweet dari hari sekarang</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Berdasarkan data masukan sebelumnya, berikut ini adalah masukannya.</p>
+
+        <form id="form_crawling">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Input</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="code">place_name</td>
+                <td class="code">
+                  <input type="hidden" name="place_name" value="{{input_crawling['place_name']}}">
+                  {{input_crawling['place_name']}}
+                </td>
+              </tr>
+              <tr>
+                <td class="code">latitude</td>
+                <td class="code">
+                  <input type="hidden" name="latitude" value="{{input_crawling['latitude']}}">
+                  {{input_crawling['latitude']}}
+                </td>
+              </tr>
+              <tr>
+                <td class="code">logitude</td>
+                <td class="code">
+                  <input type="hidden" name="longitude" value="{{input_crawling['longitude']}}">
+                  {{input_crawling['longitude']}}
+                </td>
+              </tr>
+              <tr>
+                <td class="code">attractions</td>
+                <td class="code">
+                  {% for att in input_crawling['attractions'] %}
+                    <ul>
+                      <input type="hidden" name="attractions[]" value="{{att}}">
+                      <li>{{att}}</li>
+                    </ul>
+                  {% endfor %}
+                </td>
+              </tr>
+              <tr>
+                <td class="code">range_dist</td>
+                <td class="code">
+                  <input type="hidden" name="range_dist" value="{{input_crawling['range_dist']}}">
+                  {{input_crawling['range_dist']}} Km
+                </td>
+              </tr>
+              <tr>
+                <td class="code">days_before</td>
+                <td class="code">
+                  <input type="hidden" name="days_before" value="{{input_crawling['days_before']}}">
+                  {{input_crawling['days_before']}} hari
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <input type="submit" class="btn btn-primary" value="Lakukan Crawling">
+        <a href="{{url_for('main.index')}}" class="btn btn-link">Kembali*</a>
+        <h5><small>*Jika menekan <span class="text-danger">Kembali</span>, akan mengulangi langkah dari awal.</small></h5>
+        </form>
+        <p><span id="status_crawling"></span></p>
+        {% endif %}
+      </p>
+      <hr>
+      <h2 id="preprocessing" class="anchor">2. Preprocessing</h2>
+      <p>
+        Rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
+        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
+        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut!
+      </p>
+      <hr>
+      <h2 id="tagging" class="anchor">3. Tagging</h2>
+      <p>
+        Images are responsive sed @mdo but sum are more fun peratis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
+        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
+        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut!!<br><br>
+      </p>
+      <hr>
+      <h2 id="lda" class="anchor">4. Latent Dirichlet Allocation (LDA)</h2>
+      <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
+        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
+        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut.
+      </p>
+      <hr>
+      <h2 id="grammar" class="anchor">5. Grammar Story</h2>
+      <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
+        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
+        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut.
+      </p>
+      <hr>
+      <h2 id="final" class="anchor">6. Final Result</h2>
+      <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
+        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
+        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut.
+      </p>
+      <hr>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script type="text/javascript">
+var $body   = $(document.body);
+var navHeight = $('.navbar').outerHeight(true) + 10;
+
+$('#sidebar').affix({
+    offset: {
+      top: 0,
+      bottom: navHeight
+    }
+});
+$body.scrollspy({
+	target: '#leftCol',
+	offset: navHeight
+});
+
+function gantiStatus() {
+  var stat_crawling_sidebar =  document.getElementById("stat_crawling_sidebar");
+  var stat_crawling_header = document.getElementById("stat_crawling_header");
+  stat_crawling_sidebar.innerHTML = "(Sudah)";
+  stat_crawling_sidebar.style.color = "green";
+  stat_crawling_header.innerHTML = "(Sudah)";
+  stat_crawling_header.style.color = "green";
+}
+
+function getCrawling(ev) {
+  ev.preventDefault();
+  $.ajax({
+    method: 'POST',
+    url: {{ url_for('main.crawl')|tojson }},
+    timeout: 0,
+    data: $(this).serialize(),
+    error: function(xhr, status, error) {
+      if (status==="timeout") {
+        alert("Call has timed out.");
+      } else {
+        alert(error);
+      }
+    }
+  }).done(getCrawlingShow);
+}
+
+function getCrawlingShow(data) {
+  $('#status_crawling').text(data.status_crawling);
+  gantiStatus();
+}
+
+$('#form_crawling').on('submit', getCrawling);
+
+</script>
+{% endblock %}
