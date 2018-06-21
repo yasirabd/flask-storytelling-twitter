@@ -10,7 +10,7 @@ from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
-from app.models import Crawler, Tweet
+from app.models import Crawler, Tweet, Preprocess
 from ..modules.crawler import TwitterCrawler
 from app._helpers import flash_errors
 
@@ -129,3 +129,7 @@ def crawl():
         db.session.commit()
 
     return jsonify(status_crawling="success")
+
+@bp.route('/process/preprocess', methods=['GET', 'POST'])
+def preprocess():
+    return jsonify(status_preprocessing="success")
