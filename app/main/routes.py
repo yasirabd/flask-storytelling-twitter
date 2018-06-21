@@ -130,6 +130,7 @@ def crawl():
 
     return jsonify(status_crawling="success")
 
+
 @bp.route('/process/preprocess', methods=['GET', 'POST'])
 def preprocess():
     latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
