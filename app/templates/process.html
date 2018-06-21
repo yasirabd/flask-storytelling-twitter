@@ -49,10 +49,10 @@
       </ol>
     </div>
     <div class="col-md-9">
+      <hr>
+      <h2 id="crawling" class="anchor">1. Crawling <span id="stat_crawling_header" class="text-danger">(Belum)</span></h2>
       <p>
-        <hr>
         {% if form_stweets %}
-        <h2 id="crawling" class="anchor">1. Crawling <span id="stat_crawling_header" class="text-danger">(Belum)</span></h2>
         Proses mendapatkan data <i>tweet</i> dari Twitter. Berikut adalah data masukan yang digunakan.
         <div class="table-responsive">
           <table class="table table-striped">
@@ -160,11 +160,32 @@
       <hr>
       <h2 id="preprocessing" class="anchor">2. Preprocessing</h2>
       <p>
-        Rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
-        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
-        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut!
+        Pada <i>preprocessing</i> tweet dilakukan hal berikut:
+        <ol class="list-group">
+          <li class="list-group-item">
+            <h4>Common Preprocessing</h4>
+            <ul>
+              <li>Remove ASCII and Unicode</li>
+              <li>Tokenization <code>Saya makan -> 'Saya', 'makan'</code></li>
+              <li>Case folding, convert into lowercase <code>Saya -> saya</code></li>
+              <li>Remove repeated dot <code>sedih... -> sedih.</code></li>
+              <li>Remove repeated character <code>hehe :))) -> hehe :)</code></li>
+              <li>Remove elipsis <code>lanjut baca... -> lanjut baca</code></li>
+              <li>Construct repeated word that has meaning <code>malam malam -> malam-malam</code></li>
+              <li>Remove newline</li>
+            </ul>
+          </li>
+          <li class="list-group-item">
+            <h4>Specific Preprocessing</h4>
+            <ul>
+              <li>Remove special symbols on Twitter <code>hashtag(#), mention(@username), RT, and FAV</code></li>
+              <li>Remove all emoticons</li>
+              <li>Remove URL</li>
+              <li>Spelling checker using <i>symspell</i></li>
+            </ul>
+          </li>
+        </ol>
+        <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses Crawling" id="btnPreprocessing">Lakukan Preprocessing</button>
       </p>
       <hr>
       <h2 id="tagging" class="anchor">3. Tagging</h2>
