@@ -132,4 +132,8 @@ def crawl():
 
 @bp.route('/process/preprocess', methods=['GET', 'POST'])
 def preprocess():
-    return jsonify(status_preprocessing="success")
+    latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
+    tweets = Tweet.query.filter_by(crawler_id=latest_crawler_id)
+
+    return render_template("result.html", tweets=tweets)
+    # return jsonify(status_preprocessing="success", crawler=crawler)
