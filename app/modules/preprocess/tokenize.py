@@ -6,13 +6,11 @@ from nltk.tokenize import RegexpTokenizer
 class Tokenize():
     def WordTokenize(self, sentence, removepunct=False, splitby='space'):
         """Tokenize sentence into words.
-
         Args:
             sentence (str): text of string
             stopword (list of str): list of unnecessary words
             removepunct (bool): True if want to remove punctuation
             splitby: split sentence based on
-
         Returns:
             list of words
         """
@@ -33,10 +31,8 @@ class Tokenize():
 
     def CharTokenize(self, word):
         """Tokenize word into characters.
-
         Args:
             word (str): word
-
         Returns:
             list of characters
         """
