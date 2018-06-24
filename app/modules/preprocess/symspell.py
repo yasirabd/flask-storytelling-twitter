@@ -61,7 +61,6 @@ class SymSpell():
         self._count_threshold = count_threshold
 
 
-
     def _create_dictionary_entry(self, key, count):
         """Creates or updates a dictionary entry.
 
@@ -72,7 +71,7 @@ class SymSpell():
         Returns:
             bool: True if word was added to the dictionary, False if word was updated or ignored.
         """
-        key=key.strip() #remove while spaces
+        key = key.strip() #remove while spaces
         if(len(key) == 0):
             return False;
 
@@ -121,8 +120,6 @@ class SymSpell():
         return True
 
 
-
-
     def create_dictionary_entry_MT(self, key): #Multi thread
         """
         This will be used to load preprocessed data and hence no need to check/validate etc
@@ -155,7 +152,6 @@ class SymSpell():
                 suggestions = [key]
                 self._deletes[hs] = suggestions
         return True
-
 
 
     def load_dictionary(self, corpus):
@@ -261,6 +257,7 @@ class SymSpell():
         if self._deletes is None:
             self._deletes = dict()
 
+
     def purge_below_threshold_words(self):
         """Purges words below threshold.
 
@@ -301,14 +298,15 @@ class SymSpell():
         print('Saved dictionary...')
         return;
 
-    def load_comple_model_from_json(self,filename,encoding="utf8"):
+
+    def load_complete_model_from_json(self,filename,encoding="utf8"):
         print('Loading dictionary...')
         myData = dict()
         with open(filename, 'r',encoding=encoding) as fp:
             myData = json.load(fp)
         print('Processing dictionary...')
 
-        #Push words and word counts to our master SymSpell
+        # Push words and word counts to our master SymSpell
         for word in myData["_words"]:
             count=int(myData["_words"][word])
             self._words[word]=count
@@ -327,6 +325,7 @@ class SymSpell():
         self._compact_mask=myData["_compact_mask"]
 
         return
+
 
     def load_words_with_freq_from_json_and_build_dictionary(self,filename,encoding="utf8"):
         print('Loading dictionary...')
@@ -389,7 +388,6 @@ class SymSpell():
             candidates.append(phrase)
 
         comp = EditDistance(phrase, self._distance_algorithm)
-
 
         while candidate_ptr < len(candidates):
             candidate = candidates[candidate_ptr]
@@ -486,6 +484,7 @@ class SymSpell():
         if len(suggestions) > 1:
             suggestions.sort()
         return suggestions
+
 
     def lookup_compound(self, phrase, max_edit_distance):
         """Attempts to correct the spelling of :param:`phrase`.
@@ -585,6 +584,7 @@ class SymSpell():
         suggestion.distance = edit_distance.damerau_levenshtein_distance(phrase, self._max_dictionary_edit_distance)
         return [suggestion]
 
+
     def _delete_in_suggestion_prefix(self, delete, delete_len, suggestion, suggestion_len):
         """Helper method to check if :param:`delete` is prefix of :param:`suggestion`.
 
@@ -612,6 +612,7 @@ class SymSpell():
             if j == suggestion_len:
                 return False
         return True
+
 
     def _edits(self, word, edit_distance, delete_words):
         """helper recursive method to generate deletes.
@@ -667,6 +668,8 @@ class SymSpell():
         text = text.translate(translate_map)
         seq = text.split(split)
         return [i for i in seq if i]
+
+
 
 class EditDistance():
     def __init__(self, base_string, distance_algorithm):
@@ -781,6 +784,8 @@ class EditDistance():
             return cur
         else:
             return -1
+
+
 
 class SuggestionItem():
     def __init__(self, term, distance, count):
