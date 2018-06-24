@@ -6,12 +6,14 @@ from flask_babel import _
 from googleplaces import GooglePlaces
 import pandas as pd
 import time
+import os
 from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
 from app.models import Crawler, Tweet, Preprocess
 from ..modules.crawler import TwitterCrawler
+from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from app._helpers import flash_errors
 
 
@@ -136,5 +138,48 @@ def preprocess():
     latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
     tweets = Tweet.query.filter_by(crawler_id=latest_crawler_id)
 
-    return render_template("result.html", tweets=tweets)
+    # separate text into list
+    list_tweets = []
+    for t in tweets:
+        list_tweets.append(t.text)
+
+    # define
+    normalizer = Normalize()
+    tokenizer = Tokenize()
+    symspell = SymSpell(max_dictionary_edit_distance=3)
+    SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
+    json_url = os.path.join(SITE_ROOT, "..\data", "corpus_complete_model.json")
+    symspell.load_complete_model_from_json(json_url, encoding="ISO-8859-1")
+
+    result = []
+    for tweet in list_tweets:
+        # normalize
+        tweet_norm = normalizer.remove_ascii_unicode(tweet)
+        tweet_norm = normalizer.remove_rt_fav(tweet_norm)
+        tweet_norm = normalizer.lower_text(tweet_norm)
+        tweet_norm = normalizer.remove_repeated_char(tweet_norm)
+        tweet_norm = normalizer.remove_elipsis(tweet_norm)
+        tweet_norm = normalizer.remove_newline(tweet_norm)
+        tweet_norm = normalizer.remove_url(tweet_norm)
+        tweet_norm = normalizer.remove_emoticon(tweet_norm)
+        tweet_norm = normalizer.remove_hashtag_mention(tweet_norm)
+
+        # tokenize
+        tweet_tok = tokenizer.WordTokenize(tweet_norm)
+
+        # spell correction
+        temp = []
+        for token in tweet_tok:
+            suggestion = symspell.lookup(phrase=token, verbosity=1, max_edit_distance=2)
+
+            # option if there is no suggestion
+            if len(suggestion) > 0:
+                get_suggestion = str(suggestion[0]).split(':')[0]
+                temp.append(get_suggestion)
+            else:
+                temp.append(token)
+        tweet_prepared = ' '.join(temp)
+        result.append(tweet_prepared)
+
+    return render_template("result.html", tweets=result, path=json_url)
     # return jsonify(status_preprocessing="success", crawler=crawler)
