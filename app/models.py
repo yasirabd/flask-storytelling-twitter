@@ -7,6 +7,7 @@ class Crawler(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, index=True)
     tweets = db.relationship('Tweet', backref='crawler', lazy='dynamic')
+    preprocess = db.relationship('Preprocess', backref='crawler', lazy='dynamic')
 
     def __repr__(self):
         return '<Crawler {}>'.format(self.timestamp)
@@ -33,6 +34,7 @@ class Preprocess(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(200))
     tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.id'), nullable=False)
+    crawler_id = db.Column(db.Integer, db.ForeignKey('crawler.id'), nullable=False)
 
     def __repr__(self):
         return '<Preprocess {}>'.format(self.text)
