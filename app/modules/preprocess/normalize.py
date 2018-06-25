@@ -15,7 +15,7 @@ class Normalize():
         """
         tweet = tweet.lower()
         return tweet
-        
+
     def remove_ascii_unicode(self, tweet):
         """Remove ASCII and Unicode.
         Args:
@@ -91,8 +91,14 @@ class Normalize():
         Returns:
             modified tweet
         """
-        re_hashtag_mention = re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ", tweet)
-        return ' '.join(re_hashtag_mention.split())
+        result = []
+        text = text.split(' ')
+        for t in text:
+            if t.startswith('#') or t.startswith('@'):
+                continue
+            else:
+                result.append(t)
+        return ' '.join(result)
 
     def remove_rt_fav(self, tweet):
         """Remove RT and FAV.

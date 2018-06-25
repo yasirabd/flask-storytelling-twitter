@@ -22,7 +22,9 @@ class Tokenize():
             raise NotImplementedError
 
         if removepunct:
-            transtab = str.maketrans('', '', string.punctuation)
+            remove = string.punctuation
+            remove = remove.replace("-", "")
+            transtab = str.maketrans('', '', remove)
             words = [w.translate(transtab).strip() for w in words]
             # remove empty char in list
             words = [w.strip().lower() for w in words if w.strip()]
