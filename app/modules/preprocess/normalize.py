@@ -1,4 +1,5 @@
 import re
+import string
 import numpy as np
 
 character = ['.',',',';',':','-,','...','?','!','(',')','[',']','{','}','<','>','"','/','\'','#','-','@']
@@ -25,32 +26,6 @@ class Normalize():
         """
         tweet = tweet.encode('ascii', 'ignore').decode('utf-8')
         tweet = re.sub(r'[^\x00-\x7f]',r'',tweet)
-        return tweet
-
-    def remove_repeated_char(self, tweet):
-        """Convert repeated character into one character.
-        Args:
-            tweet(str): tweet
-        Returns:
-            modified tweet
-        """
-        for i in range(len(character)):
-            char_long = 5
-            while char_long >= 2:
-                char = character[i]*char_long
-                tweet = tweet.replace(char, character[i])
-                char_long -= 1
-        return tweet
-
-    def remove_elipsis(self, tweet):
-        """Remove elipsis.
-        Args:
-            tweet(str): tweet
-        Returns:
-            modified tweet
-        """
-        tweet = tweet.replace('...', ' ...')
-        tweet = tweet.replace(' ...', '')
         return tweet
 
     def remove_newline(self, tweet):
@@ -92,8 +67,8 @@ class Normalize():
             modified tweet
         """
         result = []
-        text = text.split(' ')
-        for t in text:
+        tweet = tweet.split(' ')
+        for t in tweet:
             if t.startswith('#') or t.startswith('@'):
                 continue
             else:
@@ -109,3 +84,15 @@ class Normalize():
         """
         tweet = re.sub(r'^(RT|FAV)','', tweet)
         return tweet
+
+    def remove_punctuation(self, tweet):
+        """Remove punctuation except '-'.
+        Args:
+            tweet(str): tweet
+        Returns:
+            modified tweet
+        """
+        remove = string.punctuation
+        remove = remove.replace("-", "")
+        translator = str.maketrans(remove, ' '*len(remove))
+        return tweet.translate(translator)

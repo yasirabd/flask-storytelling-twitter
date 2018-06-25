@@ -157,20 +157,19 @@ def preprocess():
         tweet_norm = normalizer.remove_ascii_unicode(tweet)
         tweet_norm = normalizer.remove_rt_fav(tweet_norm)
         tweet_norm = normalizer.lower_text(tweet_norm)
-        tweet_norm = normalizer.remove_repeated_char(tweet_norm)
-        tweet_norm = normalizer.remove_elipsis(tweet_norm)
         tweet_norm = normalizer.remove_newline(tweet_norm)
         tweet_norm = normalizer.remove_url(tweet_norm)
         tweet_norm = normalizer.remove_emoticon(tweet_norm)
         tweet_norm = normalizer.remove_hashtag_mention(tweet_norm)
+        tweet_norm = normalizer.remove_punctuation(tweet_norm)
 
         # tokenize
-        tweet_tok = tokenizer.WordTokenize(tweet_norm)
+        tweet_tok = tokenizer.WordTokenize(tweet_norm, removepunct=True)
 
         # spell correction
         temp = []
         for token in tweet_tok:
-            suggestion = symspell.lookup(phrase=token, verbosity=1, max_edit_distance=2)
+            suggestion = symspell.lookup(phrase=token, verbosity=1, max_edit_distance=3)
 
             # option if there is no suggestion
             if len(suggestion) > 0:
