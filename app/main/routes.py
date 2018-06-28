@@ -141,7 +141,8 @@ def preprocess():
     # separate text into list
     list_tweets = []
     for t in tweets:
-        list_tweets.append(t.text)
+        id_tweet = [t.id, t.text]
+        list_tweets.append(id_tweet)
 
     # define
     normalizer = Normalize()
@@ -151,10 +152,14 @@ def preprocess():
     json_url = os.path.join(SITE_ROOT, "..\data", "corpus_complete_model.json")
     symspell.load_complete_model_from_json(json_url, encoding="ISO-8859-1")
 
+    # do preprocess
     result = []
     for tweet in list_tweets:
+        id = tweet[0]
+        text = tweet[1]
+
         # normalize
-        tweet_norm = normalizer.remove_ascii_unicode(tweet)
+        tweet_norm = normalizer.remove_ascii_unicode(text)
         tweet_norm = normalizer.remove_rt_fav(tweet_norm)
         tweet_norm = normalizer.lower_text(tweet_norm)
         tweet_norm = normalizer.remove_newline(tweet_norm)
@@ -178,7 +183,17 @@ def preprocess():
             else:
                 temp.append(token)
         tweet_prepared = ' '.join(temp)
-        result.append(tweet_prepared)
 
-    return render_template("result.html", tweets=result, path=json_url)
-    # return jsonify(status_preprocessing="success", crawler=crawler)
+        id_tweet_prepared = [id, tweet_prepared]
+        result.append(id_tweet_prepared)
+
+    # insert into table preprocess
+    for res in result:
+        tb_preprocess = Preprocess()
+        tb_preprocess.text = res[1]
+        tb_preprocess.tweet_id = res[0]
+        tb_preprocess.crawler_id = latest_crawler_id
+        db.session.add(tb_preprocess)
+        db.session.commit()
+
+    return jsonify(status_preprocessing="success")

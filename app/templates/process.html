@@ -168,9 +168,7 @@
               <li>Remove ASCII and Unicode</li>
               <li>Tokenization <code>Saya makan -> 'Saya', 'makan'</code></li>
               <li>Case folding, convert into lowercase <code>Saya -> saya</code></li>
-              <li>Remove repeated dot <code>sedih... -> sedih.</code></li>
-              <li>Remove repeated character <code>hehe :))) -> hehe :)</code></li>
-              <li>Remove elipsis <code>lanjut baca... -> lanjut baca</code></li>
+              <li>Remove punctuation <code>!?%^., etc</code></li>
               <li>Remove newline</li>
             </ul>
           </li>
@@ -184,7 +182,7 @@
             </ul>
           </li>
         </ol>
-        <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses Crawling" id="btnPreprocessing">Lakukan Preprocessing</button>
+        <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses Preprocessing" id="btnPreprocessing">Lakukan Preprocessing</button>
         <p><span id="status_preprocessing"></span></p>
       </p>
       <hr>

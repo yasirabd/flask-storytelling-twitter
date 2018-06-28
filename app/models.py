@@ -23,7 +23,7 @@ class Tweet(db.Model):
     latitude = db.Column(db.Text)
     longitude = db.Column(db.Text)
     crawler_id = db.Column(db.Integer, db.ForeignKey('crawler.id'), nullable=False)
-    preprocess = db.relationship('Preprocess', backref='tweet', uselist=False, lazy=True)
+    preprocess = db.relationship('Preprocess', backref='tweet', uselist=False)
 
     def __repr__(self):
         return '<Tweet {}>'.format(self.username)
