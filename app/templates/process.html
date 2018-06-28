@@ -42,7 +42,7 @@
         <h3>Steps</h3>
         <li class="active"><a href="#crawling">1. Crawling <span id="stat_crawling_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#preprocessing">2. Preprocessing <span id="stat_preprocessing_sidebar" class="text-danger">(Belum)</span></a></li>
-        <li><a href="#tagging">3. Tagging</a></li>
+        <li><a href="#tagging">3. POS Tagging</a></li>
         <li><a href="#lda">4. Latent Dirichlet Allocation (LDA)</a></li>
         <li><a href="#grammar">5. Grammar Story</a></li>
         <li><a href="#final">6. Final Result</a></li>
@@ -186,14 +186,252 @@
         <p><span id="status_preprocessing"></span></p>
       </p>
       <hr>
-      <h2 id="tagging" class="anchor">3. Tagging</h2>
+      <h2 id="tagging" class="anchor">3. POS Tagging</h2>
       <p>
-        Images are responsive sed @mdo but sum are more fun peratis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
-        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
-        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut!!<br><br>
+        <i>Part-of-Speech</i> Tagging adalah proses memberi tag part-of-speech pada kata dalam kalimat. Berikut adalah contohnya:<br />
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Kalimat</th>
+              <th>Setelah POS Tagging</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>saya suka memakan bakso 5 buah.</td>
+              <td>saya<code>/PRP</code> suka<code>/VBI</code> memakan<code>/VBT</code> bakso<code>/NN</code> 5<code>/CDP</code> buah<code>/NN</code> .<code>/.</code></td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="text-align:justify">Pada proses tagging kata pada kalimat, menggunakan <b>HMM POS Tagger</b> berdasarkan <i>"Alfan Farizki Wicaksono, Ayu Purwarianti.
+        HMM Based POS Tagger for Bahasa Indonesia. On Proceedings of 4th International MALINDO (Malay - Indonesian Language) Workshop. 2nd August 2010."</i></p>
+        <p>Berikut adalah tabel pos tagging:</p>
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>POS</th>
+              <th>POS Name</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>OP</td>
+              <td>Open Parenthesis</td>
+              <td>({[</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>CP</td>
+              <td>Close Parenthesis</td>
+              <td>)}]</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>GM</td>
+              <td>Slash</td>
+              <td>/</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>;</td>
+              <td>Semicolon</td>
+              <td>;</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>:</td>
+              <td>Colon</td>
+              <td>:</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>"</td>
+              <td>Quotation</td>
+              <td>" '</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>.</td>
+              <td>Sentence Terminator</td>
+              <td>.!?</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td>,</td>
+              <td>Comma</td>
+              <td>,</td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>-</td>
+              <td>Dash</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>...</td>
+              <td>Ellipsis</td>
+              <td>...</td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>JJ</td>
+              <td>Adjective</td>
+              <td>Kaya, Manis</td>
+            </tr>
+            <tr>
+              <td>12</td>
+              <td>RB</td>
+              <td>Adverb</td>
+              <td>Sementara, Nanti</td>
+            </tr>
+            <tr>
+              <td>13</td>
+              <td>NN</td>
+              <td>Common Noun</td>
+              <td>Mobil</td>
+            </tr>
+            <tr>
+              <td>14</td>
+              <td>NNP</td>
+              <td>Proper Noun</td>
+              <td>Bekasi, Indonesia</td>
+            </tr>
+            <tr>
+              <td>15</td>
+              <td>NNG</td>
+              <td>Genitive Noun</td>
+              <td>Bukunya</td>
+            </tr>
+            <tr>
+              <td>16</td>
+              <td>VBI</td>
+              <td>Intransitive Verb</td>
+              <td>Pergi</td>
+            </tr>
+            <tr>
+              <td>17</td>
+              <td>VBT</td>
+              <td>Transitive Verb</td>
+              <td>Membeli</td>
+            </tr>
+            <tr>
+              <td>18</td>
+              <td>IN</td>
+              <td>Preposition</td>
+              <td>Di, Ke, Dari</td>
+            </tr>
+            <tr>
+              <td>19</td>
+              <td>MD</td>
+              <td>Modal</td>
+              <td>Bisa</td>
+            </tr>
+            <tr>
+              <td>20</td>
+              <td>CC</td>
+              <td>Coor-Conjunction</td>
+              <td>Dan, Atau, Tetapi</td>
+            </tr>
+            <tr>
+              <td>21</td>
+              <td>SC</td>
+              <td>Subor-Conjunction</td>
+              <td>Jika, Ketika</td>
+            </tr>
+            <tr>
+              <td>22</td>
+              <td>DT</td>
+              <td>Determiner</td>
+              <td>Para, Ini, Itu</td>
+            </tr>
+            <tr>
+              <td>23</td>
+              <td>UH</td>
+              <td>Interjection</td>
+              <td>Wah, Aduh, Oi</td>
+            </tr>
+            <tr>
+              <td>24</td>
+              <td>CDO</td>
+              <td>Ordinal Numerals</td>
+              <td>Pertama, Kedua</td>
+            </tr>
+            <tr>
+              <td>25</td>
+              <td>CDC</td>
+              <td>Collective Numerals</td>
+              <td>Bertiga</td>
+            </tr>
+            <tr>
+              <td>26</td>
+              <td>CDP</td>
+              <td>Primary Numerals</td>
+              <td>Satu, Dua</td>
+            </tr>
+            <tr>
+              <td>27</td>
+              <td>CDI</td>
+              <td>Irregular Numerals</td>
+              <td>Beberapa</td>
+            </tr>
+            <tr>
+              <td>28</td>
+              <td>PRP</td>
+              <td>Personal Pronouns</td>
+              <td>Saya, Kamu</td>
+            </tr>
+            <tr>
+              <td>29</td>
+              <td>WP</td>
+              <td>WH-Pronouns</td>
+              <td>Apa, Siapa</td>
+            </tr>
+            <tr>
+              <td>30</td>
+              <td>PRN</td>
+              <td>Number Pronouns</td>
+              <td>Kedua-duanya</td>
+            </tr>
+            <tr>
+              <td>31</td>
+              <td>PRL</td>
+              <td>Locative Pronouns</td>
+              <td>Sini, Situ, Sana</td>
+            </tr>
+            <tr>
+              <td>32</td>
+              <td>NEG</td>
+              <td>Negation</td>
+              <td>Bukan, Tidak</td>
+            </tr>
+            <tr>
+              <td>33</td>
+              <td>SYM</td>
+              <td>Symbols</td>
+              <td>@#$%^&</td>
+            </tr>
+            <tr>
+              <td>34</td>
+              <td>RP</td>
+              <td>Particles</td>
+              <td>Pun, Kah</td>
+            </tr>
+            <tr>
+              <td>35</td>
+              <td>FW</td>
+              <td>Foreign Words</td>
+              <td>Foreign, Word
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses POS Tagging" id="btnPosTagging">Lakukan POS Tagging</button>
+        <p><span id="status_pos_tagging"></span></p>
       </p>
       <hr>
       <h2 id="lda" class="anchor">4. Latent Dirichlet Allocation (LDA)</h2>
