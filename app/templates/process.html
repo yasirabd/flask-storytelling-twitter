@@ -42,7 +42,7 @@
         <h3>Steps</h3>
         <li class="active"><a href="#crawling">1. Crawling <span id="stat_crawling_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#preprocessing">2. Preprocessing <span id="stat_preprocessing_sidebar" class="text-danger">(Belum)</span></a></li>
-        <li><a href="#tagging">3. POS Tagging</a></li>
+        <li><a href="#tagging">3. POS Tagging <span id="stat_pos_tagging_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#lda">4. Latent Dirichlet Allocation (LDA)</a></li>
         <li><a href="#grammar">5. Grammar Story</a></li>
         <li><a href="#final">6. Final Result</a></li>
@@ -186,7 +186,7 @@
         <p><span id="status_preprocessing"></span></p>
       </p>
       <hr>
-      <h2 id="tagging" class="anchor">3. POS Tagging</h2>
+      <h2 id="tagging" class="anchor">3. POS Tagging <span id="stat_pos_tagging_header" class="text-danger">(Belum)</span></h2>
       <p>
         <i>Part-of-Speech</i> Tagging adalah proses memberi tag part-of-speech pada kata dalam kalimat. Berikut adalah contohnya:<br />
         <table class="table table-striped">
@@ -553,5 +553,34 @@ function doPreprocessingShow(data) {
   }, 0);
 }
 $('#btnPreprocessing').click(doPreprocessing)
+
+// javascript for pos tagging
+function gantiStatusPosTagging() {
+  var stat_pos_tagging_sidebar =  document.getElementById("stat_pos_tagging_sidebar");
+  var stat_pos_tagging_header = document.getElementById("stat_pos_tagging_header");
+  stat_pos_tagging_sidebar.innerHTML = "(Sudah)";
+  stat_pos_tagging_sidebar.style.color = "green";
+  stat_pos_tagging_header.innerHTML = "(Sudah)";
+  stat_pos_tagging_header.style.color = "green";
+}
+function doPosTagging(ev){
+  ev.preventDefault();
+  $("#btnPosTagging").button('loading');
+  $.ajax({
+    method: 'POST',
+    url: {{ url_for('main.pos_tagging')|tojson }},
+    timeout: 0,
+    data: $(this).serialize(),
+  }).done(doPosTaggingShow);
+}
+function doPosTaggingShow(data) {
+  $('#status_pos_tagging').text(data.status_pos_tagging);
+  gantiStatusPosTagging();
+  $("#btnPosTagging").button('reset');
+  setTimeout(function () {
+    $("#btnPosTagging").prop("disabled", true);
+  }, 0);
+}
+$('#btnPosTagging').click(doPosTagging)
 </script>
 {% endblock %}

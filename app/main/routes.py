@@ -197,3 +197,8 @@ def preprocess():
         db.session.commit()
 
     return jsonify(status_preprocessing="success")
+
+
+@bp.route('/process/pos_tagging', methods=['GET', 'POST'])
+def pos_tagging():
+    return jsonify(status_pos_tagging="success")
