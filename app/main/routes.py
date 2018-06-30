@@ -11,7 +11,7 @@ from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
-from app.models import Crawler, Tweet, Preprocess
+from app.models import Crawler, Tweet, Preprocess, PosTag
 from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
@@ -156,8 +156,7 @@ def preprocess():
     # do preprocess
     result = []
     for tweet in list_tweets:
-        id = tweet[0]
-        text = tweet[1]
+        id, text = tweet[0], tweet[1]
 
         # normalize
         tweet_norm = normalizer.remove_ascii_unicode(text)
@@ -190,9 +189,11 @@ def preprocess():
 
     # insert into table preprocess
     for res in result:
+        id, text = res[0], res[1]
+
         tb_preprocess = Preprocess()
-        tb_preprocess.text = res[1]
-        tb_preprocess.tweet_id = res[0]
+        tb_preprocess.text = text
+        tb_preprocess.tweet_id = id
         tb_preprocess.crawler_id = latest_crawler_id
         db.session.add(tb_preprocess)
         db.session.commit()
@@ -208,7 +209,8 @@ def pos_tagging():
     # get text from table Preprocess
     list_tweets = []
     for t in tweets_preprocessed:
-        list_tweets.append(t.text)
+        tid_tweet = [t.tweet_id, t.text]
+        list_tweets.append(tid_tweet)
 
     # path
     SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -222,17 +224,30 @@ def pos_tagging():
     # do pos tagging
     result = []
     for tweet in list_tweets:
-        if len(tweet) == 0:
-            result.append(tweet)
+        tweet_id, text = tweet[0], tweet[1]
+
+        if len(text) == 0:
+            tid_text = [tweet_id, text]
+            result.append(tid_text)
         else:
-            out = tokenize.sentence_extraction(tokenize.cleaning(tweet))
+            out = tokenize.sentence_extraction(tokenize.cleaning(text))
             join_word = []
             for o in out:
                 strtag = " ".join(tokenize.tokenisasi_kalimat(o)).strip()
                 join_word += [" ".join(tagger.taggingStr(strtag))]
-            result.append(join_word)
+            tid_text = [tweet_id, join_word]
+            result.append(tid_text)
 
-    # r = [''.join(t) for t in result]
+    # insert into table preprocess
+    for tweet in result:
+        tweet_id, text = tweet[0], tweet[1]
+        tweet_str = ''.join(text)
+        
+        tb_postag = PosTag()
+        tb_postag.text = tweet_str
+        tb_postag.tweet_id = tweet_id
+        tb_postag.crawler_id = latest_crawler_id
+        db.session.add(tb_postag)
+        db.session.commit()
 
-    return render_template('result.html', tweets=result, path=current_app.root_path, length=len(result))
-    # return jsonify(status_pos_tagging="success")
+    return jsonify(status_pos_tagging="success")
