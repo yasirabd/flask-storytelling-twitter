@@ -14,6 +14,7 @@ from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
 from app.models import Crawler, Tweet, Preprocess
 from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
+from ..modules.hmmtagger import MainTagger, Tokenization
 from app._helpers import flash_errors
 
 
@@ -201,4 +202,35 @@ def preprocess():
 
 @bp.route('/process/pos_tagging', methods=['GET', 'POST'])
 def pos_tagging():
-    return jsonify(status_pos_tagging="success")
+    latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
+    tweets_preprocessed = Preprocess.query.filter_by(crawler_id=latest_crawler_id)
+
+    # get text from table Preprocess
+    list_tweets = []
+    for t in tweets_preprocessed:
+        list_tweets.append(t.text)
+
+    # path
+    SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
+    lexicon_url = os.path.join(SITE_ROOT, "..\data", "Lexicon.trn")
+    ngram_url = os.path.join(SITE_ROOT, "..\data", "Ngram.trn")
+
+    # initialize
+    tagger = MainTagger(lexicon_url, ngram_url, 0, 3, 3, 0, 0, False, 0.2, 0, 500.0, 1)
+    tokenize = Tokenization()
+
+    # do pos tagging
+    result = []
+    for tweet in list_tweets:
+        if len(tweet) == 0: continue
+        out = tokenize.sentence_extraction(tokenize.cleaning(tweet))
+        join_word = []
+        for o in out:
+            strtag = " ".join(tokenize.tokenisasi_kalimat(o)).strip()
+            join_word += [" ".join(tagger.taggingStr(strtag))]
+        result.append(join_word)
+
+    # r = [''.join(t) for t in result]
+
+    return render_template('result.html', tweets=r, path=current_app.root_path)
+    # return jsonify(status_pos_tagging="success")
