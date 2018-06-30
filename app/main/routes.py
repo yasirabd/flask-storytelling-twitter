@@ -222,15 +222,17 @@ def pos_tagging():
     # do pos tagging
     result = []
     for tweet in list_tweets:
-        if len(tweet) == 0: continue
-        out = tokenize.sentence_extraction(tokenize.cleaning(tweet))
-        join_word = []
-        for o in out:
-            strtag = " ".join(tokenize.tokenisasi_kalimat(o)).strip()
-            join_word += [" ".join(tagger.taggingStr(strtag))]
-        result.append(join_word)
+        if len(tweet) == 0:
+            result.append(tweet)
+        else:
+            out = tokenize.sentence_extraction(tokenize.cleaning(tweet))
+            join_word = []
+            for o in out:
+                strtag = " ".join(tokenize.tokenisasi_kalimat(o)).strip()
+                join_word += [" ".join(tagger.taggingStr(strtag))]
+            result.append(join_word)
 
     # r = [''.join(t) for t in result]
 
-    return render_template('result.html', tweets=r, path=current_app.root_path)
+    return render_template('result.html', tweets=result, path=current_app.root_path, length=len(result))
     # return jsonify(status_pos_tagging="success")
