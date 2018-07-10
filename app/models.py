@@ -9,6 +9,7 @@ class Crawler(db.Model):
     tweets = db.relationship('Tweet', backref='crawler', lazy='dynamic')
     preprocess = db.relationship('Preprocess', backref='crawler', lazy='dynamic')
     postag = db.relationship('PosTag', backref='crawler', lazy='dynamic')
+    penentuan_kelas = db.relationship('PenentuanKelas', backref='crawler', lazy='dynamic')
 
     def __repr__(self):
         return '<Crawler {}>'.format(self.timestamp)
@@ -26,6 +27,7 @@ class Tweet(db.Model):
     crawler_id = db.Column(db.Integer, db.ForeignKey('crawler.id'), nullable=False)
     preprocess = db.relationship('Preprocess', backref='tweet', uselist=False)
     postag = db.relationship('PosTag', backref='tweet', uselist=False)
+    penentuan_kelas = db.relationship('PenentuanKelas', backref='tweet', uselist=False)
 
     def __repr__(self):
         return '<Tweet {}>'.format(self.username)
@@ -51,3 +53,15 @@ class PosTag(db.Model):
 
     def __repr__(self):
         return '<PosTag {}>'.format(self.text)
+
+
+class PenentuanKelas(db.Model):
+    __tablename__ = 'penentuan_kelas'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(200))
+    function = db.Column(db.String(200))
+    tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.id'), nullable=False)
+    crawler_id = db.Column(db.Integer, db.ForeignKey('crawler.id'), nullable=False)
+
+    def __repr__(self):
+        return '<PenentuanKelas {} {}>'.format(self.content, self.function)

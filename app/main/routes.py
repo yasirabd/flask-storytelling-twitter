@@ -295,7 +295,7 @@ def penentuan_kelas():
             doc_complete["con"].append(text)
             doc_complete["func"].append(text)
 
-        result.append(doc_complete)
+        result.append([tweet_id, doc_complete])
 
     return render_template("result.html", tweets=result)
     # return jsonify(status_penentuan_kelas="success")
