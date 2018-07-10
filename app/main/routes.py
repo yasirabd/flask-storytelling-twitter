@@ -11,7 +11,7 @@ from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
-from app.models import Crawler, Tweet, Preprocess, PosTag
+from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas
 from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
@@ -297,5 +297,17 @@ def penentuan_kelas():
 
         result.append([tweet_id, doc_complete])
 
-    return render_template("result.html", tweets=result)
-    # return jsonify(status_penentuan_kelas="success")
+    # insert into table penentuan kelas
+    for tweet in result:
+        tweet_id, text = tweet[0], tweet[1]
+        content, function = ''.join(text["con"]), ''.join(text["func"])
+
+        tb_penentuan_kelas = PenentuanKelas()
+        tb_penentuan_kelas.content = content
+        tb_penentuan_kelas.function = function
+        tb_penentuan_kelas.tweet_id = tweet_id
+        tb_penentuan_kelas.crawler_id = latest_crawler_id
+        db.session.add(tb_penentuan_kelas)
+        db.session.commit()
+
+    return jsonify(status_penentuan_kelas="success")
