@@ -9,8 +9,10 @@
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='process.css')}}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link href="https://fonts.googleapis.com/css?family=Roboto Mono" rel='stylesheet'>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='bootstrap-slider.min.css')}}">
 <script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
 <script type="text/javascript" src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='bootstrap-slider.min.js')}}"></script>
 {% endblock %}
 
 {% block navbar %}
@@ -43,9 +45,10 @@
         <li class="active"><a href="#crawling">1. Crawling <span id="stat_crawling_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#preprocessing">2. Preprocessing <span id="stat_preprocessing_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#tagging">3. POS Tagging <span id="stat_pos_tagging_sidebar" class="text-danger">(Belum)</span></a></li>
-        <li><a href="#lda">4. Latent Dirichlet Allocation (LDA)</a></li>
-        <li><a href="#grammar">5. Grammar Story</a></li>
-        <li><a href="#final">6. Final Result</a></li>
+        <li><a href="#penentuan_kelas">4. Penentuan Kelas <span id="stat_penentuan_kelas_sidebar" class="text-danger">(Belum)</span></a></li>
+        <li><a href="#lda">5. Latent Dirichlet Allocation (LDA)</a></li>
+        <li><a href="#grammar">6. Grammar Story</a></li>
+        <li><a href="#final">7. Final Result</a></li>
       </ol>
     </div>
     <div class="col-md-9">
@@ -434,7 +437,109 @@
         <p><span id="status_pos_tagging"></span></p>
       </p>
       <hr>
-      <h2 id="lda" class="anchor">4. Latent Dirichlet Allocation (LDA)</h2>
+      <h2 id="penentuan_kelas" class="anchor">4. Penentuan Kelas <span id="stat_penentuan_kelas_header" class="text-danger">(Belum)</span></h2>
+      <p>
+        Setelah dilakukan <i>tagging</i>, kata-kata yang memiliki <i>tag</i> seperti berikut yang dilakukan pencarian topik:
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>POS</th>
+              <th>POS Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>JJ</td>
+              <td>Adjective</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>NN</td>
+              <td>Common Noun</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>NNP</td>
+              <td>Proper Noun</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>NNG</td>
+              <td>Genitive Noun</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>VBI</td>
+              <td>Intransitive Verb</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>VBT</td>
+              <td>Transitive Verb</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>FW</td>
+              <td>Foreign Word</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          Sehingga kata-kata dapat dikategorikan menjadi 2 buah kelas, yaitu <b>Kelas Content</b> dan <b>Kelas Function</b>.
+        </p>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Kelas</th>
+              <th>Tag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Content</td>
+              <td>JJ, NN, NNP, NNG, VBI, VBT, FW</td>
+            </tr>
+            <tr>
+              <td>Function</td>
+              <td>OP, CP, GM, ';', ':', '"', '.', ',', '-', '...', RB, IN, MD, CC, SC, DT, UH, CDO, CDC, CDP, CDI, PRP, WP, PRN, PRL, NEG, SYM, RP</td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses Penentuan Kelas" id="btnPosTagging">Lakukan Penentuan Kelas</button>
+        <p><span id="status_penentuan_kelas"></span></p>
+      </p>
+      <hr>
+      <h2 id="lda" class="anchor">5. Latent Dirichlet Allocation (LDA)</h2>
+      <p>
+        <i>Latent Dirichlet Allocation </i>(LDA) adalah <i>generative probabilistic model</i> dari kumpulan dokumen yang berisi kata-kata.
+        <form>
+          <div class="form-group">
+            <label>Jumlah Topik</label>
+            <input type="number" class="form-control" value="3" />
+          </div>
+          <div class="form-group">
+            <label>Alpha</label>
+            <div>
+              <input id="alpha" type="text" data-slider-min="0" data-slider-max="2" data-slider-step="0.01" data-slider-value="0.1" />
+              <span id="alphaValLabel" style="margin-left:30px;"> Current Alpha Value: <span id="alphaVal">0.1</span></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Beta</label>
+            <div>
+              <input id="beta" type="text" data-slider-min="0" data-slider-max="2" data-slider-step="0.01" data-slider-value="0.1" />
+              <span id="betaValLabel" style="margin-left:30px;"> Current Beta Value: <span id="betaVal">0.1</span></span>
+            </div>
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Lakukan Proses LDA</button>
+          </div>
+        </form>
+      </p>
+      <hr>
+      <h2 id="grammar" class="anchor">6. Grammar Story</h2>
       <p>
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
         totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
@@ -444,17 +549,7 @@
         Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut.
       </p>
       <hr>
-      <h2 id="grammar" class="anchor">5. Grammar Story</h2>
-      <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
-        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
-        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut.
-      </p>
-      <hr>
-      <h2 id="final" class="anchor">6. Final Result</h2>
+      <h2 id="final" class="anchor">7. Final Result</h2>
       <p>
         Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
         totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
@@ -582,5 +677,16 @@ function doPosTaggingShow(data) {
   }, 0);
 }
 $('#btnPosTagging').click(doPosTagging)
+
+$("#alpha").slider();
+$("#alpha").on("slide", function(slideEvent) {
+  $("#alphaVal").text(slideEvent.value);
+})
+
+$("#beta").slider();
+$("#beta").on("slide", function(slideEvent) {
+  $("#betaVal").text(slideEvent.value);
+})
+
 </script>
 {% endblock %}

@@ -55,3 +55,7 @@ body {
 .code {
   font-family: 'Roboto Mono';
 }
+
+.slider {
+    width: 100% !important;
+}
