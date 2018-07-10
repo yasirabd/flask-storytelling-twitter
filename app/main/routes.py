@@ -255,4 +255,47 @@ def pos_tagging():
 
 @bp.route('/process/penentuan_kelas', methods=['GET', 'POST'])
 def penentuan_kelas():
-    return jsonify(status_penentuan_kelas="success")
+    Ccon = ['JJ', 'NN','NNP', 'NNG', 'VBI', 'VBT', 'FW']
+    Cfunc = ['OP', 'CP', 'GM', ';', ':', '"', '.',
+             ',', '-', '...', 'RB', 'IN', 'MD', 'CC',
+             'SC', 'DT', 'UH', 'CDO', 'CDC', 'CDP', 'CDI',
+             'PRP', 'WP', 'PRN', 'PRL', 'NEG', 'SYM', 'RP']
+
+    latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
+    tweets_tagged = PosTag.query.filter_by(crawler_id=latest_crawler_id)
+
+    # get text from table PostTag
+    list_tweets = []
+    for t in tweets_tagged:
+        tid_tweet = [t.tweet_id, t.text]
+        list_tweets.append(tid_tweet)
+
+    # do penentuan kelas
+    result = []
+    for tweet in list_tweets:
+        tweet_id, text = tweet[0], tweet[1]
+
+        if len(text) > 0:
+            text_split = text.split(' ')
+
+            doc_complete = {"con": [], "func": []}
+            con = []
+            func = []
+
+            for word in text_split:
+                w = word.split('/', 1)[0]
+                tag = word.split('/', 1)[1]
+                if tag in Ccon:
+                    con.append(word)
+                elif tag in Cfunc:
+                    func.append(word)
+            doc_complete["con"].append(' '.join(con))
+            doc_complete["func"].append(' '.join(func))
+        else:
+            doc_complete["con"].append(text)
+            doc_complete["func"].append(text)
+
+        result.append(doc_complete)
+
+    return render_template("result.html", tweets=result)
+    # return jsonify(status_penentuan_kelas="success")
