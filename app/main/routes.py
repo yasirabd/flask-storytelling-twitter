@@ -242,7 +242,7 @@ def pos_tagging():
     for tweet in result:
         tweet_id, text = tweet[0], tweet[1]
         tweet_str = ''.join(text)
-        
+
         tb_postag = PosTag()
         tb_postag.text = tweet_str
         tb_postag.tweet_id = tweet_id
@@ -251,3 +251,8 @@ def pos_tagging():
         db.session.commit()
 
     return jsonify(status_pos_tagging="success")
+
+
+@bp.route('/process/penentuan_kelas', methods=['GET', 'POST'])
+def penentuan_kelas():
+    return jsonify(status_penentuan_kelas="success")
