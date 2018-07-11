@@ -255,11 +255,11 @@ def pos_tagging():
 
 @bp.route('/process/penentuan_kelas', methods=['GET', 'POST'])
 def penentuan_kelas():
-    Ccon = ['JJ', 'NN','NNP', 'NNG', 'VBI', 'VBT', 'FW']
+    Ccon = ['JJ', 'NN','NNP', 'NNG', 'VBI', 'VBT']
     Cfunc = ['OP', 'CP', 'GM', ';', ':', '"', '.',
              ',', '-', '...', 'RB', 'IN', 'MD', 'CC',
              'SC', 'DT', 'UH', 'CDO', 'CDC', 'CDP', 'CDI',
-             'PRP', 'WP', 'PRN', 'PRL', 'NEG', 'SYM', 'RP']
+             'PRP', 'WP', 'PRN', 'PRL', 'NEG', 'SYM', 'RP', 'FW']
 
     latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
     tweets_tagged = PosTag.query.filter_by(crawler_id=latest_crawler_id)

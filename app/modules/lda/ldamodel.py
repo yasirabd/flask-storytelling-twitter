@@ -17,9 +17,9 @@ class LdaModel:
         self.beta = beta
 
         if documents is not None:
-            self.trainData()
+            self.doProcess()
 
-    def trainData(self):
+    def doProcess(self):
         """train the data"""
         # a list of Counters, one for each document in documents
         self.document_topic_counts = [Counter() for _ in self.documents]
