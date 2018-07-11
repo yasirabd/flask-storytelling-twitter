@@ -509,27 +509,38 @@
       <h2 id="lda" class="anchor">5. Latent Dirichlet Allocation (LDA)</h2>
       <p>
         <i>Latent Dirichlet Allocation </i>(LDA) adalah <i>generative probabilistic model</i> dari kumpulan dokumen yang berisi kata-kata.
-        <form>
+        <form class="form-horizontal">
           <div class="form-group">
-            <label>Jumlah Topik</label>
-            <input type="number" class="form-control" value="3" />
+            <label class="col-sm-2 control-label">Jumlah Topik</label>
+            <div class="col-sm-10 form-inline">
+              <input type="number" class="form-control" value="" disabled />
+              <button class="btn btn-success">Generate Jumlah Topik</button>
+            </div>
           </div>
           <div class="form-group">
-            <label>Alpha</label>
-            <div>
+            <label class="col-sm-2 control-label">Alpha</label>
+            <div class="col-sm-10">
               <input id="alpha" type="text" data-slider-min="0" data-slider-max="2" data-slider-step="0.01" data-slider-value="0.1" />
               <span id="alphaValLabel" style="margin-left:30px;"> Current Alpha Value: <span id="alphaVal">0.1</span></span>
             </div>
           </div>
           <div class="form-group">
-            <label>Beta</label>
-            <div>
+            <label class="col-sm-2 control-label">Beta</label>
+            <div class="col-sm-10">
               <input id="beta" type="text" data-slider-min="0" data-slider-max="2" data-slider-step="0.01" data-slider-value="0.1" />
               <span id="betaValLabel" style="margin-left:30px;"> Current Beta Value: <span id="betaVal">0.1</span></span>
             </div>
           </div>
           <div class="form-group">
-            <button type="submit" class="btn btn-primary">Lakukan Proses LDA</button>
+            <label class="col-sm-2 control-label">Iterations</label>
+            <div class="col-sm-10">
+                <input type="number" class="form-control" value="1000"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-primary">Lakukan Proses LDA</button>
+            </div>
           </div>
         </form>
       </p>
