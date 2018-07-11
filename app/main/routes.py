@@ -342,4 +342,19 @@ def generate_topik():
     # calculate number of topic
     jumlah_topik = math.ceil(1 + 3.222 * math.log10(W))
 
-    return jsonify(jumlah_topik=jumlah_topik)
+    return jsonify(num_topics=jumlah_topik)
+
+
+@bp.route('/process/lda', methods=['GET', 'POST'])
+def lda():
+    num_topics = request.form['num_topics']
+    alpha = request.form['alpha']
+    beta = request.form['beta']
+    iterations = request.form['iterations']
+
+    if num_topics and alpha and beta and iterations:
+        return jsonify(status_lda="success")
+    else:
+        return jsonify(status_lda="failed")
+
+    # return render_template('process.html', form_lda=form_lda, num_topics=num_topics)
