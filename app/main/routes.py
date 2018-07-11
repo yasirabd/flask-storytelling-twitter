@@ -7,6 +7,7 @@ from googleplaces import GooglePlaces
 import pandas as pd
 import time
 import os
+import math
 from datetime import datetime
 from io import BytesIO
 from app.main import bp
@@ -311,3 +312,34 @@ def penentuan_kelas():
         db.session.commit()
 
     return jsonify(status_penentuan_kelas="success")
+
+
+@bp.route('/process/lda/generate_topik', methods=['GET', 'POST'])
+def generate_topik():
+    latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
+    tweets_penentuan_kelas = PenentuanKelas.query.filter_by(crawler_id=latest_crawler_id)
+
+    # get tweets content
+    list_tweets = []
+    for tweet in tweets_penentuan_kelas:
+        list_tweets.append(tweet.content)
+
+    # only get text not tag
+    documents = []
+    for tweet in list_tweets:
+        tweet_split = tweet.split(' ')
+
+        temp = []
+        for word in tweet_split:
+            w = word.split("/", 1)[0]
+            temp.append(w)
+        documents.append(temp)
+
+    # calculate distinct words
+    distinct_words = set(word for document in documents for word in document)
+    W = len(distinct_words)
+
+    # calculate number of topic
+    jumlah_topik = math.ceil(1 + 3.222 * math.log10(W))
+
+    return jsonify(jumlah_topik=jumlah_topik)

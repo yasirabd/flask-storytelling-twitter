@@ -513,8 +513,8 @@
           <div class="form-group">
             <label class="col-sm-2 control-label">Jumlah Topik</label>
             <div class="col-sm-10 form-inline">
-              <input type="number" class="form-control" value="" disabled />
-              <button class="btn btn-success">Generate Jumlah Topik</button>
+              <input type="number" id="jumlah_topik" class="form-control" value="" disabled />
+              <button type="submit" class="btn btn-success" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses Generate Topik" id="btnGenerateTopik">Generate Jumlah Topik</button>
             </div>
           </div>
           <div class="form-group">
@@ -713,16 +713,32 @@ function doPenentuanKelasShow(data) {
 }
 $('#btnPenentuanKelas').click(doPenentuanKelas)
 
-
+// javascript slider beta and alpha
 $("#alpha").slider();
 $("#alpha").on("slide", function(slideEvent) {
   $("#alphaVal").text(slideEvent.value);
 })
-
 $("#beta").slider();
 $("#beta").on("slide", function(slideEvent) {
   $("#betaVal").text(slideEvent.value);
 })
+
+// javascript for generate jumlah topik
+function doGenerateTopik(ev){
+  ev.preventDefault();
+  $("#btnGenerateTopik").button('loading');
+  $.ajax({
+    method: 'POST',
+    url: {{ url_for('main.generate_topik')|tojson }},
+    timeout: 0,
+    data: $(this).serialize(),
+  }).done(doGenerateTopikShow);
+}
+function doGenerateTopikShow(data) {
+  $('#jumlah_topik').val(data.jumlah_topik);
+  $("#btnGenerateTopik").button('reset');
+}
+$('#btnGenerateTopik').click(doGenerateTopik)
 
 </script>
 {% endblock %}
