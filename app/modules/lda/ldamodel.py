@@ -20,7 +20,7 @@ class LdaModel:
             self.doProcess()
 
     def doProcess(self):
-        """train the data"""
+        """do process"""
         # a list of Counters, one for each document in documents
         self.document_topic_counts = [Counter() for _ in self.documents]
 
@@ -108,3 +108,32 @@ class LdaModel:
 
         return self.sample_from([self.topic_weight(d, word, k)
                             for k in range(K)])
+
+    def get_pwz(self, word):
+        """return probability word given topic (pwz)"""
+        return self.pwz_counts[word]
+
+    def get_topic_word_pwz(self, documents_tagged):
+        """return list contains topic, word with tag, and probability word given topic (pwz)"""
+        # split the document by space
+        documents_tagged_splitted = []
+        for t in documents_tagged:
+            documents_tagged_splitted.append(t.split(' '))
+
+        distinct_words_tagged = sorted(set(word for document in documents_tagged_splitted for word in document))
+
+        result = []
+        for k, word_counts in enumerate(self.topic_word_counts):
+            for word, count in word_counts.most_common():
+                if count > 0:
+                    temp = []
+                    for word_tagged in distinct_words_tagged:
+                        if word == word_tagged.split('/')[0]:
+                            temp.append(word_tagged)
+
+                    if len(temp) > 1:
+                        for t in temp:
+                            result.append([k, t, self.get_pwz(word)[k]])
+                    else:
+                        result.append([k, ''.join(temp), self.get_pwz(word)[k]])
+        return result
