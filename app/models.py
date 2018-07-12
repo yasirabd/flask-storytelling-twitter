@@ -10,6 +10,7 @@ class Crawler(db.Model):
     preprocess = db.relationship('Preprocess', backref='crawler', lazy='dynamic')
     postag = db.relationship('PosTag', backref='crawler', lazy='dynamic')
     penentuan_kelas = db.relationship('PenentuanKelas', backref='crawler', lazy='dynamic')
+    ldapwz = db.relationship('LdaPWZ', backref='crawler', lazy='dynamic')
 
     def __repr__(self):
         return '<Crawler {}>'.format(self.timestamp)
@@ -65,3 +66,12 @@ class PenentuanKelas(db.Model):
 
     def __repr__(self):
         return '<PenentuanKelas {} {}>'.format(self.content, self.function)
+
+
+class LdaPWZ(db.Model):
+    __tablename__ = 'ldapwz'
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(200))
+    topic = db.Column(db.Integer)
+    pwz = db.Column(db.String(200))
+    crawler_id = db.Column(db.Integer, db.ForeignKey('crawler.id'), nullable=False)
