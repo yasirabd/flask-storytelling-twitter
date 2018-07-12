@@ -12,7 +12,7 @@ from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
-from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas
+from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas, LdaPWZ
 from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
@@ -375,7 +375,18 @@ def lda():
         lda = LdaModel(documents, int(num_topics), float(alpha), float(beta), int(iterations))
         result = lda.get_topic_word_pwz(tweets_content_tagged)
 
-        # return jsonify(status_lda="success")
-        return render_template('result.html', tweets=result)
+        # insert into table ldapwz
+        for r in result:
+            topic, word, pwz = r[0], r[1], r[2]
+
+            tb_ldapwz = LdaPWZ()
+            tb_ldapwz.topic = topic
+            tb_ldapwz.word = word
+            tb_ldapwz.pwz = pwz
+            tb_ldapwz.crawler_id = latest_crawler_id
+            db.session.add(tb_ldapwz)
+            db.session.commit()
+
+        return jsonify(status_lda="success")
     else:
         return jsonify(status_lda="failed")
