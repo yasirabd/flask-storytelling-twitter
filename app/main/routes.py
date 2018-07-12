@@ -16,6 +16,7 @@ from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas
 from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
+from ..modules.lda import LdaModel
 from app._helpers import flash_errors
 
 
@@ -347,14 +348,34 @@ def generate_topik():
 
 @bp.route('/process/lda', methods=['GET', 'POST'])
 def lda():
+    latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
+    tweets_penentuan_kelas = PenentuanKelas.query.filter_by(crawler_id=latest_crawler_id)
+
+    # get tweets content
+    tweets_content_tagged = []
+    for tweet in tweets_penentuan_kelas:
+        tweets_content_tagged.append(tweet.content)
+
+    # separate word and tag
+    documents = []
+    for tweet in tweets_content_tagged:
+        tweet_split = tweet.split(' ')
+        temp = []
+        for word in tweet_split:
+            w = word.split("/", 1)[0]
+            temp.append(w)
+        documents.append(temp)
+
     num_topics = request.form['num_topics']
     alpha = request.form['alpha']
     beta = request.form['beta']
     iterations = request.form['iterations']
 
     if num_topics and alpha and beta and iterations:
-        return jsonify(status_lda="success")
+        lda = LdaModel(documents, int(num_topics), float(alpha), float(beta), int(iterations))
+        result = lda.get_topic_word_pwz(tweets_content_tagged)
+
+        # return jsonify(status_lda="success")
+        return render_template('result.html', tweets=result)
     else:
         return jsonify(status_lda="failed")
-
-    # return render_template('process.html', form_lda=form_lda, num_topics=num_topics)

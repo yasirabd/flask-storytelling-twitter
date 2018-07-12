@@ -10,11 +10,12 @@ class LdaModel:
         `alpha` is the hyperparameter for document topic distribution
         `beta` is the hyperparameter for topic word distribution
     """
-    def __init__(self, documents=None, K=3, alpha=0.1, beta=0.1):
+    def __init__(self, documents=None, K=3, alpha=0.1, beta=0.1, iterations=1000):
         self.documents = documents
         self.K = K
         self.alpha = alpha
         self.beta = beta
+        self.iterations = iterations
 
         if documents is not None:
             self.doProcess()
@@ -45,6 +46,11 @@ class LdaModel:
         self.document_topics = [[random.randrange(self.K) for word in document]
                                 for document in self.documents]
 
+        # a list of pwz
+        keys = distinct_words
+        topics = [k for k in range(self.K)]
+        self.pwz_counts = {key: {key: 0 for key in topics} for key in keys}
+
         for d in range(D):
             for word, topic, in zip(self.documents[d], self.document_topics[d]):
                 self.document_topic_counts[d][topic] += 1
@@ -52,7 +58,7 @@ class LdaModel:
                 self.topic_counts[topic] += 1
 
         # Gibbs Sampling
-        for iter in range(1000):
+        for iter in range(self.iterations):
             for d in range(D):
                 for i, (word, topic) in enumerate(zip(self.documents[d],
                                                       self.document_topics[d])):
@@ -73,6 +79,12 @@ class LdaModel:
                     self.topic_word_counts[new_topic][word] += 1
                     self.topic_counts[new_topic] += 1
                     self.document_lengths[d] += 1
+
+        # get word with pwz
+        for d in range(D):
+            for i, (word, topic) in enumerate(zip(self.documents[d], self.document_topics[d])):
+                pwz = self.p_word_given_topic(word, topic, self.beta)
+                self.pwz_counts[word][topic] = pwz
 
     def p_topic_given_document(self, topic, d, alpha):
         """the fraction of words in document _d_
