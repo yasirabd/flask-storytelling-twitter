@@ -136,8 +136,10 @@ class LdaModel:
 
         result = []
         for k, word_counts in enumerate(self.topic_word_counts):
+            total = 0
             for word, count in word_counts.most_common():
                 if count > 0:
+                    if total >= 20: break
                     temp = []
                     for word_tagged in distinct_words_tagged:
                         if word == word_tagged.split('/')[0]:
@@ -146,6 +148,8 @@ class LdaModel:
                     if len(temp) > 1:
                         for t in temp:
                             result.append([k, t, self.get_pwz(word)[k]])
+                            total += 1
                     else:
                         result.append([k, ''.join(temp), self.get_pwz(word)[k]])
+                        total += 1
         return result

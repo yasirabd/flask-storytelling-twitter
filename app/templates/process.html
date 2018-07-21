@@ -509,7 +509,7 @@
       <h2 id="lda" class="anchor">5. Latent Dirichlet Allocation (LDA) <span id="stat_lda_header" class="text-danger">(Belum)</span></h2>
       <p>
         <i>Latent Dirichlet Allocation </i>(LDA) adalah <i>generative probabilistic model</i> dari kumpulan dokumen yang berisi kata-kata.
-        <form class="form-horizontal" method="post" action="{{ url_for('main.lda') }}" role="form">
+        <form class="form-horizontal" method="post" action="{{ url_for('main.lda') }}" role="form" id="formLda">
           <div class="form-group">
             <label class="col-sm-2 control-label">Jumlah Topik</label>
             <div class="col-sm-10 form-inline">
@@ -767,6 +767,7 @@ function doLDAShow(data) {
     $("#btnLda").prop("disabled", true);
   }, 0);
 }
-$('form').submit(doLDA)
+// $('#formLda').on('submit', doLda);
+$('#formLda').submit(doLDA);
 </script>
 {% endblock %}
