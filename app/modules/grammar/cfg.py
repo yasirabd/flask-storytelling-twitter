@@ -156,7 +156,7 @@ class CFG():
         else:
             NP_RULES = ['_NP _CC _NP'] + self.remove_JJP(self.generate_NP(list_tag))
             NP = {"_NP": NP_RULES}
-            if check_VP(list_tag):
+            if self.check_VP(list_tag):
                 VP_RULES = ['_PP'] + self.remove_JJP(self.generate_VP(list_tag))
                 VP = {"_VP": VP_RULES}
             else:

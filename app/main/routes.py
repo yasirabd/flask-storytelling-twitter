@@ -4,6 +4,7 @@ from flask import render_template, url_for, session, redirect, make_response, js
 from flask_googlemaps import Map
 from flask_babel import _
 from googleplaces import GooglePlaces
+from collections import defaultdict
 import pandas as pd
 import time
 import os
@@ -17,6 +18,7 @@ from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
 from ..modules.lda import LdaModel
+from ..modules.grammar import CFG
 from app._helpers import flash_errors
 
 
@@ -394,4 +396,19 @@ def lda():
 
 @bp.route('/process/grammar', methods=['GET', 'POST'])
 def grammar():
-    return jsonify(status_grammar="success")
+    latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
+    ldapwz = LdaPWZ.query.filter_by(crawler_id=latest_crawler_id)
+
+    # get topic with words in dictionary
+    dict_ldapwz = defaultdict(list)
+    for data in ldapwz:
+        dict_ldapwz[data.topic].append(data.word)
+
+    # initialize
+    cfg = CFG()
+
+    # create sentence for story
+    dict_story = cfg.create_sentences_from_data(dict(dict_ldapwz))
+
+    return render_template("result.html", tweets=dict_story)
+    # return jsonify(status_grammar="success")
