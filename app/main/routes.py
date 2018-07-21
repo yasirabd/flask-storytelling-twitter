@@ -13,7 +13,7 @@ from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
-from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas, LdaPWZ
+from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas, LdaPWZ, GrammarStory
 from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
@@ -410,5 +410,14 @@ def grammar():
     # create sentence for story
     dict_story = cfg.create_sentences_from_data(dict(dict_ldapwz))
 
-    return render_template("result.html", tweets=dict_story)
-    # return jsonify(status_grammar="success")
+    # insert into table GrammarStory
+    for topic, list_sentence in dict_story.items():
+        for sentence in list_sentence:
+            tb_grammar_story = GrammarStory()
+            tb_grammar_story.topic = topic
+            tb_grammar_story.sentence = sentence
+            tb_grammar_story.crawler_id = latest_crawler_id
+            db.session.add(tb_grammar_story)
+            db.session.commit()
+
+    return jsonify(status_grammar="success")
