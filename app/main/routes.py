@@ -390,3 +390,8 @@ def lda():
         return jsonify(status_lda="success")
     else:
         return jsonify(status_lda="failed")
+
+
+@bp.route('/process/grammar', methods=['GET', 'POST'])
+def grammar():
+    return jsonify(status_grammar="success")

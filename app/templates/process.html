@@ -804,5 +804,34 @@ function doLDAShow(data) {
   }, 0);
 }
 $('#formLda').submit(doLDA);
+
+// javascript for context-free grammar
+function gantiStatusGrammar() {
+  var stat_grammar_sidebar =  document.getElementById("stat_grammar_sidebar");
+  var stat_grammar_header = document.getElementById("stat_grammar_header");
+  stat_grammar_sidebar.innerHTML = "(Sudah)";
+  stat_grammar_sidebar.style.color = "green";
+  stat_grammar_header.innerHTML = "(Sudah)";
+  stat_grammar_header.style.color = "green";
+}
+function doGrammar(ev){
+  ev.preventDefault();
+  $("#btnGrammar").button('loading');
+  $.ajax({
+    method: 'POST',
+    url: {{ url_for('main.grammar')|tojson }},
+    timeout: 0,
+    data: $(this).serialize(),
+  }).done(doGrammarShow);
+}
+function doGrammarShow(data) {
+  $('#status_grammar').text(data.status_grammar);
+  gantiStatusGrammar();
+  $("#btnGrammar").button('reset');
+  setTimeout(function () {
+    $("#btnGrammar").prop("disabled", true);
+  }, 0);
+}
+$('#btnGrammar').click(doGrammar)
 </script>
 {% endblock %}
