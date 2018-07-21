@@ -47,7 +47,7 @@
         <li><a href="#tagging">3. POS Tagging <span id="stat_pos_tagging_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#penentuan_kelas">4. Penentuan Kelas <span id="stat_penentuan_kelas_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#lda">5. Latent Dirichlet Allocation (LDA) <span id="stat_lda_sidebar" class="text-danger">(Belum)</span></a></li>
-        <li><a href="#grammar">6. Grammar Story</a></li>
+        <li><a href="#grammar">6. Grammar Story <span id="stat_grammar_sidebar" class="text-danger">(Belum)</span></a></li>
         <li><a href="#final">7. Final Result</a></li>
       </ol>
     </div>
@@ -546,14 +546,50 @@
         <p><span id="status_lda"></span></p>
       </p>
       <hr>
-      <h2 id="grammar" class="anchor">6. Grammar Story</h2>
+      <h2 id="grammar" class="anchor">6. Grammar Story <span id="stat_grammar_header" class="text-danger">(Belum)</h2>
       <p>
-        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-        totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
-        dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia cor magni dolores
-        eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit,
-        sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-        Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut.
+        <p style="text-align:justify">
+          Penyusunan kata-kata yang memiliki <i>tag</i> pada tiap topik, menggunakan Context-free Grammar (CFG). CFG adalah jenis tata bahasa formal tertentu
+          dan berisi sekumpulan <i>production rules</i> yang menggambarkan semua kemungkinan susunan kata tersebut. Dalam penelitian ini menggunakan bahasa Indonesia.
+          Berikut adalah contoh penerapan CFG:
+        </p>
+        <pre>
+        Grammar Production Rules<code>
+        S   -> NP VP
+        NP  -> NN | NN DT | NN JJP | NP CC NP
+        VP  -> VBI NP | VBI NP PP
+        PP  -> IN NP
+        JJP -> JJ | JJ CC JJ
+        VBI -> 'memakan' | 'melihat'
+        NN  -> 'sapi' | 'kambing' | 'manusia'
+        JJ  -> 'gemuk' | 'kurus'
+        DT  -> 'ini' | 'itu'
+        IN  -> 'di' | 'ke' | 'dari'
+        CC  -> 'dan' | 'atau'</code>
+
+        Possible Output:<samp>
+        manusia kurus melihat kambing gemuk dan kurus</samp></pre>
+        <p style="text-align:justify">
+          Dalam penerapan CFG, berikut adalah <i>Production Rules</i> yang diterapkan:
+        </p>
+        <pre>
+        Grammar Production Rules<code>
+        S   -> NP VP
+        NP  -> NN | NNP | NNG | NN DT | DT NNP | DT NNG | NN JJP | NP CC NP
+        VP  -> VBI NP | VBI IN NP | VBI NP PP | VBT | VBT NP | PP | JJP
+        PP  -> IN NP
+        JJP -> JJ | JJ CC JJ
+        NN  -> *set of words*
+        NNP -> *set of words*
+        NNG -> *set of words*
+        VBI -> *set of words*
+        VBT -> *set of words*
+        JJ  -> *set of words*
+        CC  -> 'dan' | 'atau'
+        IN  -> 'di' | 'ke' | 'dari'
+        DT  -> 'ini' | 'itu'</code></pre>
+        <button type="submit" class="btn btn-primary" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Proses Penyusunan Kalimat" id="btnGrammar">Lakukan Penyusunan Kalimat</button>
+        <p><span id="status_grammar"></span></p>
       </p>
       <hr>
       <h2 id="final" class="anchor">7. Final Result</h2>
@@ -767,7 +803,6 @@ function doLDAShow(data) {
     $("#btnLda").prop("disabled", true);
   }, 0);
 }
-// $('#formLda').on('submit', doLda);
 $('#formLda').submit(doLDA);
 </script>
 {% endblock %}
