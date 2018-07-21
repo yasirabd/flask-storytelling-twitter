@@ -11,6 +11,7 @@ class Crawler(db.Model):
     postag = db.relationship('PosTag', backref='crawler', lazy='dynamic')
     penentuan_kelas = db.relationship('PenentuanKelas', backref='crawler', lazy='dynamic')
     ldapwz = db.relationship('LdaPWZ', backref='crawler', lazy='dynamic')
+    grammar_story = db.relationship('GrammarStory', backref='crawler', lazy='dynamic')
 
     def __repr__(self):
         return '<Crawler {}>'.format(self.timestamp)
@@ -74,4 +75,12 @@ class LdaPWZ(db.Model):
     word = db.Column(db.String(200))
     topic = db.Column(db.Integer)
     pwz = db.Column(db.String(200))
+    crawler_id = db.Column(db.Integer, db.ForeignKey('crawler.id'), nullable=False)
+
+
+class GrammarStory(db.Model):
+    __tablename__ = 'grammar_story'
+    id = db.Column(db.Integer, primary_key=True)
+    topic = db.Column(db.Integer)
+    sentence = db.Column(db.String(1000))
     crawler_id = db.Column(db.Integer, db.ForeignKey('crawler.id'), nullable=False)
