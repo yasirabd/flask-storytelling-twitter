@@ -18,6 +18,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><a href="{{ url_for('main.index') }}">{{ _('Home') }}</a></li>
+        <li><a href="{{ url_for('main.stories') }}">{{ _('Stories') }}</a></li>
       </ul>
     </div>
   </div>
@@ -26,26 +27,16 @@
 
 {% block content %}
 <div class="container">
+  <h3>Pilih Storymu</h3>
   <div class="row">
-    <div class="col-md-3">
-      <div class="container">
-        <button class="btn btn-primary">Details</button>
-        <button class="btn btn-success">Export</button>
-      </div>
-      <div class="container">
-        <div>
-          Topik
-        </div>
-        <ul>
-          <li>Topik 1</li>
-          <li>Topik 2</li>
-          <li>Topik 3</li>
-          <li>Topik 4</li>
-        </ul>
-      </div>
-    </div>
-    <div class="col-md-9">
-      <h3>Storytelling</h3>
+    <div class="col-md-12">
+      <table class="table" id="crawlTable">
+        <thead>
+          <th>No</th>
+          <th>Tanggal</th>
+          <th>Action</th>
+        </thead>
+      </table>
     </div>
   </div>
 </div>

@@ -1,15 +1,6 @@
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/fixes.html" as fixes %}
-{% from "_formhelpers.html" import render_field, render_mutiple_checkbox_field %}
-
+{% extends 'bootstrap/base.html' %}
 {% block title %}
 {{ _('Storytelling Twitter') }}
-{% endblock %}
-
-{% block head %}
-{{super()}}
-<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
-<script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
 {% endblock %}
 
 {% block navbar %}
@@ -24,7 +15,7 @@
       </button>
       <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ _('Storytelling Twitter') }}</a>
     </div>
-    <div class="collapse navbar-collapse">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><a href="{{ url_for('main.index') }}">{{ _('Home') }}</a></li>
         <li><a href="{{ url_for('main.stories') }}">{{ _('Stories') }}</a></li>
@@ -36,6 +27,27 @@
 
 {% block content %}
 <div class="container">
-  {% block app_content %}{% endblock %}
+  <div class="row">
+    <div class="col-md-3">
+      <div class="container">
+        <button class="btn btn-primary">Details</button>
+        <button class="btn btn-success">Export</button>
+      </div>
+      <div class="container">
+        <div>
+          Topik
+        </div>
+        <ul>
+          <li>Topik 1</li>
+          <li>Topik 2</li>
+          <li>Topik 3</li>
+          <li>Topik 4</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <h3>Storytelling</h3>
+    </div>
+  </div>
 </div>
 {% endblock %}

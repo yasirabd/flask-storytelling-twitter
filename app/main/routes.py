@@ -421,3 +421,8 @@ def grammar():
             db.session.commit()
 
     return jsonify(status_grammar="success")
+
+
+@bp.route('/stories', methods=['GET', 'POST'])
+def stories():
+    return render_template("stories.html")
