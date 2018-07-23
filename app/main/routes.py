@@ -439,7 +439,20 @@ def story(id):
     for data in grammar_story:
         dict_story[data.topic].append(data.sentence)
 
-    # number of topic
-    num_topics = len(dict_story)
+    # topic
+    topic = list(dict_story.keys())
 
-    return render_template("story.html", num_topics=num_topics)
+    return render_template("story.html", crawler_id=id, topic=topic)
+
+
+@bp.route('/stories/<int:id>/get_story', methods=['GET', 'POST'])
+def get_story(id):
+    jsonData = request.get_json()
+    selected_topic = jsonData['selected_topic']
+    grammar_story = GrammarStory.query.filter_by(crawler_id=id, topic=selected_topic)
+
+    result = []
+    for data in grammar_story:
+        result.append(data.sentence)
+    print(result)
+    return jsonify(grammar_story='. '.join(i.capitalize() for i in result))
