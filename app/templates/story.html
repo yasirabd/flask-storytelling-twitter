@@ -52,7 +52,7 @@
           {% endfor %}
         </select>
       </div>
-      <button class="btn btn-primary btn-block"><i class="fa fa-info-circle"></i> Details</button>
+      <a href="{{url_for('main.get_crawling', id=crawler_id)}}" class="btn btn-primary btn-block"><i class="fa fa-info-circle"></i> Details</a>
       <button class="btn btn-success btn-block"><i class="fa fa-download"></i> Export All Story</button>
     </div>
     <div class="col-md-10">

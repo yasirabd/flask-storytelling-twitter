@@ -426,7 +426,6 @@ def grammar():
 @bp.route('/stories', methods=['GET', 'POST'])
 def stories():
     crawler = Crawler.query.order_by(Crawler.id.desc()).all()
-
     return render_template("stories.html", crawler=crawler)
 
 
@@ -456,3 +455,45 @@ def get_story(id):
         result.append(data.sentence)
     print(result)
     return jsonify(grammar_story='. '.join(i.capitalize() for i in result))
+
+
+@bp.route('/stories/<int:id>/details/crawling', methods=['GET', 'POST'])
+def get_crawling(id):
+    tweets = Tweet.query.filter_by(crawler_id=id)
+
+    return render_template("details_crawling.html", crawler_id=id, tweets=tweets)
+
+
+@bp.route('/stories/<int:id>/details/preprocessing', methods=['GET', 'POST'])
+def get_preprocessing(id):
+    preprocess = Preprocess.query.filter_by(crawler_id=id)
+
+    return render_template("details_preprocessing.html", crawler_id=id, preprocess=preprocess)
+
+
+@bp.route('/stories/<int:id>/details/postag', methods=['GET', 'POST'])
+def get_postag(id):
+    postag = PosTag.query.filter_by(crawler_id=id)
+
+    return render_template("details_postag.html", crawler_id=id, postag=postag)
+
+
+@bp.route('/stories/<int:id>/details/kelas', methods=['GET', 'POST'])
+def get_kelas(id):
+    kelas = PenentuanKelas.query.filter_by(crawler_id=id)
+
+    return render_template("details_kelas.html", crawler_id=id, kelas=kelas)
+
+
+@bp.route('/stories/<int:id>/details/lda', methods=['GET', 'POST'])
+def get_lda(id):
+    lda = LdaPWZ.query.filter_by(crawler_id=id)
+
+    return render_template("details_lda.html", crawler_id=id, lda=lda)
+
+
+@bp.route('/stories/<int:id>/details/story', methods=['GET', 'POST'])
+def get_grammar_story(id):
+    story = GrammarStory.query.filter_by(crawler_id=id)
+
+    return render_template("details_story.html", crawler_id=id, story=story)
