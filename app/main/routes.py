@@ -432,6 +432,14 @@ def stories():
 
 @bp.route('/stories/<int:id>', methods=['GET', 'POST'])
 def story(id):
-    tweet = Tweet.query.filter_by(crawler_id=id)
+    grammar_story = GrammarStory.query.filter_by(crawler_id=id)
 
-    return render_template("story.html", table=tweet)
+    # store data in dictionary
+    dict_story = defaultdict(list)
+    for data in grammar_story:
+        dict_story[data.topic].append(data.sentence)
+
+    # number of topic
+    num_topics = len(dict_story)
+
+    return render_template("story.html", num_topics=num_topics)

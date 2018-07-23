@@ -40,11 +40,9 @@
       <div class="form-group">
         <label for="selectTopic">Select Topic:</label>
         <select class="form-control" id="selectTopic">
-          <option>0</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-          <option>4</option>
+          {% for topic in range(num_topics) %}
+          <option>{{ topic }}</option>
+          {% endfor %}
         </select>
       </div>
       <button class="btn btn-primary btn-block"><i class="fa fa-home"></i> Lihat Details</button>
