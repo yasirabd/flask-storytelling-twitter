@@ -27,17 +27,37 @@
 
 {% block content %}
 <div class="container">
-  <h3>Pilih Storymu</h3>
+  <h3>Pilih Story</h3>
   <div class="row">
-    <div class="col-md-12">
-      <table class="table" id="crawlTable">
+    <div class="col-md-6">
+      <table class="table table-stripped">
         <thead>
           <th>No</th>
-          <th>Tanggal</th>
+          <th>Waktu</th>
           <th>Action</th>
         </thead>
+        {% set ns = namespace(i=1) %}
+        {% for item in crawler %}
+        <tbody>
+          <tr>
+            <td>{{ ns.i }}</td>
+            <td>{{ item.timestamp }}</td>
+            <td><a class="btn btn-primary" href="{{ url_for('main.story', id=item.id)}}">Lihat Story</a></td>
+          </tr>
+          {% set ns.i = ns.i+1 %}
+        </tbody>
+        {% endfor %}
       </table>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$('#crawlTable').DataTable({
+  "processing": true,
+  "ajax": "{{ url_for('main.stories')}}",
+})
+</script>
 {% endblock %}

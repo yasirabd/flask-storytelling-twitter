@@ -425,4 +425,13 @@ def grammar():
 
 @bp.route('/stories', methods=['GET', 'POST'])
 def stories():
-    return render_template("stories.html")
+    crawler = Crawler.query.order_by(Crawler.id.desc()).all()
+
+    return render_template("stories.html", crawler=crawler)
+
+
+@bp.route('/stories/<int:id>', methods=['GET', 'POST'])
+def story(id):
+    tweet = Tweet.query.filter_by(crawler_id=id)
+
+    return render_template("story.html", table=tweet)
