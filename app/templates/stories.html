@@ -52,12 +52,3 @@
   </div>
 </div>
 {% endblock %}
-
-{% block scripts %}
-<script>
-$('#crawlTable').DataTable({
-  "processing": true,
-  "ajax": "{{ url_for('main.stories')}}",
-})
-</script>
-{% endblock %}

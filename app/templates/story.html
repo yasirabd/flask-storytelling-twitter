@@ -27,6 +27,39 @@
 
 {% block content %}
 <div class="container">
-  Story
+  <div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-10">
+      <h3>Your Story</h3>
+      <hr>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <div class="form-group">
+        <label for="selectTopic">Select Topic:</label>
+        <select class="form-control" id="selectTopic">
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-block"><i class="fa fa-home"></i> Lihat Details</button>
+      <button class="btn btn-success btn-block">Export</button>
+    </div>
+    <div class="col-md-10">
+      <h3>Topic 0</h3>
+      {% set ns = namespace(n=10) %}
+      {% for i in range(ns.n) %}
+      <p>
+        Kalimat {{ i }}
+      </p>
+      {% set ns.n = ns.n+1 %}
+      {% endfor %}
+    </div>
+  </div>
 </div>
 {% endblock %}
