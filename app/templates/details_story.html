@@ -5,9 +5,22 @@
 
 {% block head %}
 {{super()}}
-<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='details.css')}}">
-<script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
-<script type="text/javascript" src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<style>
+  body {
+      position: relative;
+  }
+  .affix {
+      top: 70px;
+      z-index: 9999 !important;
+  }
+</style>
 {% endblock %}
 
 {% block navbar %}
@@ -35,8 +48,8 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="col-md-3" id="leftCol">
-      <ol class="nav nav-stacked" id="sidebar">
+    <nav class="col-sm-3" id="myScrollspy">
+      <ol class="nav nav-stacked" id="sidebar" data-spy="affix" data-offset-top="0">
         <h3>Details</h3>
         <li><a href="{{url_for('main.get_crawling', id=crawler_id)}}">1. Crawling</a></li>
         <li><a href="{{url_for('main.get_preprocessing', id=crawler_id)}}">2. Preprocessing</span></a></li>
@@ -45,27 +58,27 @@
         <li><a href="{{url_for('main.get_lda', id=crawler_id)}}">5. Latent Dirichlet Allocation (LDA)</a></li>
         <li><a href="{{url_for('main.get_grammar_story', id=crawler_id)}}">6. Grammar Story</a></li>
       </ol>
-    </div>
+    </nav>
     <div class="col-md-9">
       <h3>Table Grammar Story</h3>
       <hr>
-      <table class="table table-stripped">
+      <table class="table table-stripped" id="tblStory">
         <thead>
           <th>No</th>
           <th>Topic</th>
           <th>Sentence</th>
         </thead>
-        {% set ns = namespace(i=1) %}
-        {% for item in story %}
         <tbody>
+          {% set ns = namespace(i=1) %}
+          {% for item in story %}
           <tr>
             <td>{{ ns.i }}</td>
             <td>{{ item.topic }}</td>
             <td>{{ item.sentence }}</td>
           </tr>
           {% set ns.i = ns.i+1 %}
+          {% endfor %}
         </tbody>
-        {% endfor %}
       </table>
     </div>
   </div>
@@ -74,18 +87,8 @@
 
 {% block scripts %}
 <script>
-// javascript for menu steps static scrolling
-var $body   = $(document.body);
-var navHeight = $('.navbar').outerHeight(true) + 10;
-$('#sidebar').affix({
-    offset: {
-      top: 0,
-      bottom: navHeight
-    }
-});
-$body.scrollspy({
-	target: '#leftCol',
-	offset: navHeight
+$(document).ready(function() {
+  $('#tblStory').DataTable();
 });
 </script>
 {% endblock %}
