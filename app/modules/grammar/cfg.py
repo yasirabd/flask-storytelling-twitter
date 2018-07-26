@@ -2,8 +2,8 @@ from collections import OrderedDict, defaultdict
 import re, random
 
 
-NP = ['_NN', '_NNP', '_NNG', '_NN _DT', '_DT _NNP', '_DT _NNG', '_NN _JJP', '_NNP _JJP', '_NP _CC _NP']
-VP = ['_VBI _NP', '_VBI _IN _NP', '_VBI _NP _PP', '_VBT', '_VBT _NP', '_PP', '_JJP']
+NP = ['_NN', '_NNP', '_NNG', '_NN _DT', '_NN _JJP', '_NNP _JJP', '_NP _CC _NP']
+VP = ['_VBT _NP', '_VBT _NP _PP', '_VBI', '_VBI _PP', '_PP', '_JJP']
 
 class CFG():
     """

@@ -557,10 +557,10 @@
         Grammar Production Rules<code>
         S   -> NP VP
         NP  -> NN | NN DT | NN JJP | NP CC NP
-        VP  -> VBI NP | VBI NP PP
+        VP  -> VBT NP | VBT NP PP
         PP  -> IN NP
         JJP -> JJ | JJ CC JJ
-        VBI -> 'memakan' | 'melihat'
+        VBT -> 'memakan' | 'melihat'
         NN  -> 'sapi' | 'kambing' | 'manusia'
         JJ  -> 'gemuk' | 'kurus'
         DT  -> 'ini' | 'itu'
@@ -575,8 +575,8 @@
         <pre>
         Grammar Production Rules<code>
         S   -> NP VP
-        NP  -> NN | NNP | NNG | NN DT | DT NNP | DT NNG | NN JJP | NP CC NP
-        VP  -> VBI NP | VBI IN NP | VBI NP PP | VBT | VBT NP | PP | JJP
+        NP  -> NN | NNP | NNG | NN DT | NN JJP | NNP JJP | NP CC NP
+        VP  -> VBT NP | VBT NP PP | VBI | VBI PP | VBI JJP | PP | JJP
         PP  -> IN NP
         JJP -> JJ | JJ CC JJ
         NN  -> *set of words*
