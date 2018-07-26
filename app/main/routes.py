@@ -453,7 +453,7 @@ def get_story(id):
     result = []
     for data in grammar_story:
         result.append(data.sentence)
-    print(result)
+
     return jsonify(grammar_story='. '.join(i.capitalize() for i in result))
 
 
