@@ -3,6 +3,11 @@
 {{ _('Storytelling Twitter') }}
 {% endblock %}
 
+{% block head %}
+{{super()}}
+<link rel="icon" href="{{url_for('static', filename='logo.png')}}" sizes="16x16">
+{% endblock %}
+
 {% block navbar %}
 <nav class="navbar navbar-default">
   <div class="container">
