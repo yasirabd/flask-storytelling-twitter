@@ -18,7 +18,7 @@ from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
 from ..modules.lda import LdaModel
-from ..modules.grammar import CFG
+from ..modules.grammar import CFG_Informasi, CFG_Cerita
 from app._helpers import flash_errors
 
 
@@ -402,23 +402,41 @@ def grammar():
     # get topic with words in dictionary
     dict_ldapwz = defaultdict(list)
     for data in ldapwz:
-        dict_ldapwz[data.topic].append(data.word)
+        dict_ldapwz[data.topic].append([data.word, data.pwz])
 
     # initialize
-    cfg = CFG()
+    cfg_informasi = CFG_Informasi()
+    cfg_cerita = CFG_Cerita()
 
     # create sentence for story
-    dict_story = cfg.create_sentences_from_data(dict(dict_ldapwz))
+    dict_story_informasi = cfg_informasi.create_sentences_from_data(dict(dict_ldapwz))
+    dict_story_cerita = cfg_cerita.create_sentences_from_data(dict(dict_ldapwz))
+
+    # join into dict_story
+    dict_story = defaultdict(list)
+    for d in (dict_story_informasi, dict_story_cerita):
+        for key, value in d.items():
+            dict_story[key].append('. '.join(i.capitalize() for i in value))
 
     # insert into table GrammarStory
-    for topic, list_sentence in dict_story.items():
-        for sentence in list_sentence:
-            tb_grammar_story = GrammarStory()
-            tb_grammar_story.topic = topic
-            tb_grammar_story.sentence = sentence
-            tb_grammar_story.crawler_id = latest_crawler_id
-            db.session.add(tb_grammar_story)
-            db.session.commit()
+    for topic, stories in dict_story.items():
+        # insert informasi
+        tb_grammar_story = GrammarStory()
+        tb_grammar_story.topic = topic
+        tb_grammar_story.rules = 'informasi'
+        tb_grammar_story.story = stories[0]
+        tb_grammar_story.crawler_id = latest_crawler_id
+        db.session.add(tb_grammar_story)
+        db.session.commit()
+
+        # insert cerita
+        tb_grammar_story = GrammarStory()
+        tb_grammar_story.topic = topic
+        tb_grammar_story.rules = 'cerita'
+        tb_grammar_story.story = stories[1]
+        tb_grammar_story.crawler_id = latest_crawler_id
+        db.session.add(tb_grammar_story)
+        db.session.commit()
 
     return jsonify(status_grammar="success")
 
