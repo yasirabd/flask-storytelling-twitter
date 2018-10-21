@@ -10,6 +10,7 @@ import time
 import os
 import math
 from datetime import datetime
+import pytz
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
@@ -102,7 +103,7 @@ def result():
 
         # insert into crawler table
         crawler = Crawler()
-        crawler.timestamp = datetime.utcnow()
+        crawler.timestamp = datetime.now(pytz.timezone('Asia/Jakarta'))
         db.session.add(crawler)
         db.session.commit()
 
@@ -377,7 +378,9 @@ def result():
             db.session.add(tb_grammar_story)
             db.session.commit()
 
-    return render_template('dump.html', form_stweets=form_stweets)
+    c = Crawler.query.order_by(Crawler.id.desc()).all()
+
+    return render_template("stories.html", crawler=c, form_stweets=form_stweets)
 
 
 @bp.route('/process', methods=['GET', 'POST'])
