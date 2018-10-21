@@ -1,0 +1,39 @@
+body {
+  font-family: sans-serif;
+}
+
+.title {
+  font: 125 50px/0.8 'Cookie', Helvetica, sans-serif;
+  color: #808080;
+  text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
+}
+
+.logo {
+  display: block;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.paper {
+  background: #fff;
+  margin-top: 30px;
+  box-shadow:
+    /* The top layer shadow */
+    0 -1px 1px rgba(0,0,0,0.15),
+    /* The second layer */
+    0 -10px 0 -5px #eee,
+    /* The second layer shadow */
+    0 -10px 1px -4px rgba(0,0,0,0.15),
+     /* The third layer */
+    0 -20px 0 -10px #eee,
+    /* The third layer shadow */
+    0 -20px 1px -9px rgba(0,0,0,0.15);
+    /* Padding for demo purposes */
+    padding: 30px;
+}
+
+.btn-details {
+  text-align: center;
+}
