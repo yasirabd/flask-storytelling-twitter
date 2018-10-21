@@ -96,3 +96,17 @@ class Normalize():
         remove = remove.replace("-", "")
         translator = str.maketrans(remove, ' '*len(remove))
         return tweet.translate(translator)
+
+    def join_attraction(self, tweet, attractions):
+        """Join attraction with strip
+        Args:
+            tweet(str): tweet
+        Returns:
+            modified tweet with attraction joined
+        """
+        for att in attractions:
+            if att in tweet:
+                att_split = att.split()
+                att_strip = '-'.join(att_split)
+                tweet = tweet.replace(att, att_strip)
+        return tweet

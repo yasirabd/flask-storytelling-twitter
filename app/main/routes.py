@@ -13,7 +13,7 @@ from datetime import datetime
 from io import BytesIO
 from app.main import bp
 from app.main.forms import SearchPlaceForm, SearchTweetsForm, ChoiceObj
-from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas, LdaPWZ, GrammarStory
+from app.models import Crawler, Tweet, Preprocess, PosTag, PenentuanKelas, LdaPWZ, GrammarStory, Attractions
 from ..modules.crawler import TwitterCrawler
 from ..modules.preprocess import Normalize, Tokenize, SymSpell
 from ..modules.hmmtagger import MainTagger, Tokenization
@@ -111,7 +111,6 @@ def crawl():
     range_dist = request.form.get('range_dist')
     days_before = request.form.get('days_before')
 
-
     twitter_crawler = TwitterCrawler(current_app)
     df_attractions = twitter_crawler.fetch_tweets_from_attractions(attractions, int(days_before), float(latitude),
                                                                    float(longitude), int(range_dist), place_name)
@@ -120,6 +119,14 @@ def crawl():
     crawler = Crawler()
     crawler.timestamp = datetime.utcnow()
     db.session.add(crawler)
+    db.session.commit()
+
+    # insert into attractions table
+    attractions_lower = [x.lower() for x in attractions]
+    att = Attractions()
+    att.attractions = ','.join(attractions_lower)
+    att.crawler_id = crawler.id
+    db.session.add(att)
     db.session.commit()
 
     # insert into tweet table
@@ -142,6 +149,14 @@ def crawl():
 def preprocess():
     latest_crawler_id = (Crawler.query.order_by(Crawler.id.desc()).first()).id
     tweets = Tweet.query.filter_by(crawler_id=latest_crawler_id)
+    attractions = Attractions.query.filter_by(crawler_id=latest_crawler_id)
+
+    # change attractions into list
+    list_attractions = []
+    for a in attractions:
+        list_attractions.append(a.attractions)
+
+    list_attractions = ''.join(list_attractions).split(',')
 
     # separate text into list
     list_tweets = []
@@ -187,6 +202,9 @@ def preprocess():
             else:
                 temp.append(token)
         tweet_prepared = ' '.join(temp)
+
+        # join attraction with strip
+        tweet_prepared = normalizer.join_attraction(tweet_prepared, list_attractions)
 
         id_tweet_prepared = [id, tweet_prepared]
         result.append(id_tweet_prepared)

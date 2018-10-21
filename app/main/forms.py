@@ -37,6 +37,6 @@ class SearchTweetsForm(FlaskForm):
     latitude = HiddenField(_l('Latitude'), validators=[DataRequired()])
     longitude = HiddenField(_l('Longitude'), validators=[DataRequired()])
     multi_attractions = SelectMultipleAttractions('Attractions', choices=[], validators=[InputRequired()])
-    range_dist = SelectField(_l('Range distance (Km)'), choices=RANGES, validators=[DataRequired()])
-    days_before = SelectField(_l('Days before'), choices=DAYS, validators=[DataRequired()])
+    range_dist = SelectField(_l('Range distances (Km)'), choices=RANGES, validators=[DataRequired()])
+    days_before = SelectField(_l('Days before (days)'), choices=DAYS, validators=[DataRequired()])
     submit = SubmitField(_l('Crawl Tweets'))
