@@ -388,30 +388,30 @@ def dump():
     return render_template('dump.html')
 
 
-@bp.route('/process', methods=['GET', 'POST'])
-def process():
-    selectedChoices = ChoiceObj('attractions', session.get('selected'))
-    form_splace = SearchPlaceForm()
-    form_stweets = SearchTweetsForm(obj=selectedChoices)
-    input_crawling = {}
-
-    if form_stweets.validate_on_submit():
-        session['selected'] = form_stweets.multi_attractions.data
-        place_name = form_stweets.place.data
-        latitude = form_stweets.latitude.data
-        longitude = form_stweets.longitude.data
-        attractions = session.get('selected')
-        range_dist = form_stweets.range_dist.data
-        days_before = form_stweets.days_before.data
-
-        input_crawling = {'place_name': place_name,
-                          'latitude': latitude,
-                          'longitude': longitude,
-                          'attractions': attractions,
-                          'range_dist': range_dist,
-                          'days_before': days_before}
-
-    return render_template('process.html', form_stweets=form_stweets, input_crawling=input_crawling)
+# @bp.route('/process', methods=['GET', 'POST'])
+# def process():
+#     selectedChoices = ChoiceObj('attractions', session.get('selected'))
+#     form_splace = SearchPlaceForm()
+#     form_stweets = SearchTweetsForm(obj=selectedChoices)
+#     input_crawling = {}
+#
+#     if form_stweets.validate_on_submit():
+#         session['selected'] = form_stweets.multi_attractions.data
+#         place_name = form_stweets.place.data
+#         latitude = form_stweets.latitude.data
+#         longitude = form_stweets.longitude.data
+#         attractions = session.get('selected')
+#         range_dist = form_stweets.range_dist.data
+#         days_before = form_stweets.days_before.data
+#
+#         input_crawling = {'place_name': place_name,
+#                           'latitude': latitude,
+#                           'longitude': longitude,
+#                           'attractions': attractions,
+#                           'range_dist': range_dist,
+#                           'days_before': days_before}
+#
+#     return render_template('process.html', form_stweets=form_stweets, input_crawling=input_crawling)
 
 
 # @bp.route('/process/crawl', methods=['GET', 'POST'])
@@ -784,25 +784,22 @@ def story(id):
     # store data in dictionary
     dict_story = defaultdict(list)
     for data in grammar_story:
-        dict_story[data.topic].append(data.sentence)
+        dict_story[data.topic].append([data.rules, data.story])
 
-    # topic
-    topic = list(dict_story.keys())
-
-    return render_template("story.html", crawler_id=id, topic=topic)
+    return render_template("story.html", crawler_id=id, dict_story=dict(dict_story))
 
 
-@bp.route('/stories/<int:id>/get_story', methods=['GET', 'POST'])
-def get_story(id):
-    jsonData = request.get_json()
-    selected_topic = jsonData['selected_topic']
-    grammar_story = GrammarStory.query.filter_by(crawler_id=id, topic=selected_topic)
-
-    result = []
-    for data in grammar_story:
-        result.append(data.sentence)
-
-    return jsonify(grammar_story='. '.join(i.capitalize() for i in result))
+# @bp.route('/stories/<int:id>/get_story', methods=['GET', 'POST'])
+# def get_story(id):
+#     jsonData = request.get_json()
+#     selected_topic = jsonData['selected_topic']
+#     grammar_story = GrammarStory.query.filter_by(crawler_id=id, topic=selected_topic)
+#
+#     result = []
+#     for data in grammar_story:
+#         result.append(data.sentence)
+#
+#     return jsonify(grammar_story='. '.join(i.capitalize() for i in result))
 
 
 @bp.route('/stories/<int:id>/details/crawling', methods=['GET', 'POST'])

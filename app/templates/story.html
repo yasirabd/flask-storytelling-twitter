@@ -5,8 +5,25 @@
 
 {% block head %}
 {{super()}}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='story.css')}}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+<link href='http://fonts.googleapis.com/css?family=Cookie' rel='stylesheet' type='text/css'>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<style>
+  body {
+      position: relative;
+  }
+  .affix {
+      top: 70px;
+      z-index: 9999 !important;
+  }
+</style>
 {% endblock %}
 
 {% block navbar %}
@@ -33,53 +50,26 @@
 
 {% block content %}
 <div class="container">
-  <div class="row">
-    <div class="col-md-2">
-    </div>
-    <div class="col-md-10">
-      <h3>Your Story</h3>
-      <hr>
-    </div>
+  <div class="logo">
+    <img src="{{url_for('static', filename='logo.png')}}" width="110" height="110">
+    <h3 class="title">Your Story</h3>
   </div>
-  <div class="row">
-    <div class="col-md-2">
-      <div class="form-group">
-        <label for="selectTopic">Select Topic:</label>
-        <select class="form-control" id="selectTopic" name="selectTopic">
-          {% for t in topic %}
-          <option value="" selected disabled hidden>Choose a topic</option>
-          <option value="{{t}}">{{ t }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <a href="{{url_for('main.get_crawling', id=crawler_id)}}" class="btn btn-primary btn-block"><i class="fa fa-info-circle"></i> Details</a>
-      <button class="btn btn-success btn-block"><i class="fa fa-download"></i> Export All Story</button>
+  <div class="paper">
+    <div class="btn-details">
+      <a href="{{url_for('main.get_crawling', id=crawler_id)}}" class="btn btn-primary"><i class="fa fa-info-circle"></i> Details</a>
     </div>
-    <div class="col-md-10">
-      <span hidden id="crawlerId">{{ crawler_id }}</span>
-      <p style="text-align:justify" id="story"></p>
+    <div class="content">
+      {% for topic, story in dict_story.items() %}
+        <h3 class="title">Topik {{ topic }}</h3>
+        {% set informasi, cerita = story[0], story[1] %}
+        <u>Rules {{ informasi[0] }}</u>
+        <p style="text-align:justify">{{ informasi[1] }}</p>
+        <u>Rules {{ cerita[0] }}</u>
+        <p style="text-align:justify">{{ cerita[1] }}</p>
+        <br/>
+      {% endfor %}
     </div>
+    <hr>
   </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script type="text/javascript">
-$('#selectTopic').change(function() {
-  var crawler_id = $('#crawlerId').val();
-  $.ajax({
-    type: 'POST',
-    url: "{{ url_for('main.get_story', id=crawler_id)}}",
-    dataType: 'json',
-    contentType: 'application/json',
-    data: JSON.stringify({'selected_topic': $('#selectTopic').val()}),
-    success: function(data) {
-      $('#story').text(data.grammar_story);
-    },
-    error: function(result){
-         console.log(result);
-    },
-  })
-});
-</script>
 {% endblock %}
