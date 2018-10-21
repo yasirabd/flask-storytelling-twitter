@@ -50,7 +50,7 @@
   <div class="row">
     <nav class="col-sm-3" id="myScrollspy">
       <ol class="nav nav-stacked" id="sidebar" data-spy="affix" data-offset-top="0">
-        <h3>Details</h3>
+        <h3>Details <a href="{{ url_for('main.story', id=crawler_id)}}" class="btn btn-primary btn-sm">Back</a></h3>
         <li><a href="{{url_for('main.get_crawling', id=crawler_id)}}">1. Crawling</a></li>
         <li><a href="{{url_for('main.get_preprocessing', id=crawler_id)}}">2. Preprocessing</span></a></li>
         <li><a href="{{url_for('main.get_postag', id=crawler_id)}}">3. POS Tagging</a></li>
