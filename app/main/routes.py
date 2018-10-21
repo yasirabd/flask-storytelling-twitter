@@ -385,11 +385,6 @@ def result():
     return render_template("stories.html", crawler=c, form_stweets=form_stweets)
 
 
-@bp.route('/dump', methods=['GET', 'POST'])
-def dump():
-    return render_template('dump.html')
-
-
 # @bp.route('/process', methods=['GET', 'POST'])
 # def process():
 #     selectedChoices = ChoiceObj('attractions', session.get('selected'))

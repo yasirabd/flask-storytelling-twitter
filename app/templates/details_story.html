@@ -60,13 +60,14 @@
       </ol>
     </nav>
     <div class="col-md-9">
-      <h3>Table Grammar Story</h3>
+      <h3>Hasil Grammar Story</h3>
       <hr>
       <table class="table table-stripped" id="tblStory">
         <thead>
           <th>No</th>
           <th>Topic</th>
-          <th>Sentence</th>
+          <th>Rules</th>
+          <th>Story</th>
         </thead>
         <tbody>
           {% set ns = namespace(i=1) %}
@@ -74,7 +75,8 @@
           <tr>
             <td>{{ ns.i }}</td>
             <td>{{ item.topic }}</td>
-            <td>{{ item.sentence }}</td>
+            <td>{{ item.rules }}</td>
+            <td>{{ item.story }}</td>
           </tr>
           {% set ns.i = ns.i+1 %}
           {% endfor %}
