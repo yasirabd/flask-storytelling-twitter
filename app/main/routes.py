@@ -76,6 +76,132 @@ def attractions():
                             form_stweets=form_stweets)
 
 
+@bp.route('/result', methods=['GET', 'POST'])
+def result():
+    selectedChoices = ChoiceObj('attractions', session.get('selected'))
+    form_splace = SearchPlaceForm()
+    form_stweets = SearchTweetsForm(obj=selectedChoices)
+
+    if form_stweets.validate_on_submit():
+        session['selected'] = form_stweets.multi_attractions.data
+        place_name = form_stweets.place.data
+        latitude = form_stweets.latitude.data
+        longitude = form_stweets.longitude.data
+        attractions = session.get('selected')
+        range_dist = form_stweets.range_dist.data
+        days_before = form_stweets.days_before.data
+
+        # CRAWLING
+        twitter_crawler = TwitterCrawler(current_app)
+        df_attractions = twitter_crawler.fetch_tweets_from_attractions(attractions, int(days_before), float(latitude),
+                                                                       float(longitude), int(range_dist), place_name)
+
+        if len(df_attractions) < 20:
+            return render_template('notification.html')
+
+        # insert into crawler table
+        crawler = Crawler()
+        crawler.timestamp = datetime.utcnow()
+        db.session.add(crawler)
+        db.session.commit()
+
+        # insert into attractions table
+        attractions_lower = [x.lower() for x in attractions]
+        att = Attractions()
+        att.attractions = ','.join(attractions_lower)
+        att.crawler_id = crawler.id
+        db.session.add(att)
+        db.session.commit()
+
+        # insert into tweet table
+        for _, row in df_attractions.iterrows():
+            tweet = Tweet()
+            tweet.user_id = row['user_id']
+            tweet.username = row['username']
+            tweet.created = row['created_at']
+            tweet.text = row['text']
+            tweet.latitude = row['latitude']
+            tweet.longitude = row['longitude']
+            tweet.crawler_id = crawler.id
+            db.session.add(tweet)
+            db.session.commit()
+
+        # PREPROCESSING
+        tweets = Tweet.query.filter_by(crawler_id=crawler.id)
+        attractions = Attractions.query.filter_by(crawler_id=crawler.id)
+
+        # change attractions into list
+        list_attractions = []
+        for a in attractions:
+            list_attractions.append(a.attractions)
+
+        list_attractions = ''.join(list_attractions).split(',')
+
+        # separate text into list
+        list_tweets = []
+        for t in tweets:
+            id_tweet = [t.id, t.text]
+            list_tweets.append(id_tweet)
+
+        # define
+        normalizer = Normalize()
+        tokenizer = Tokenize()
+        symspell = SymSpell(max_dictionary_edit_distance=3)
+        SITE_ROOT = os.path.abspath(os.path.dirname(__file__))
+        json_url = os.path.join(SITE_ROOT, "..\data", "corpus_complete_model.json")
+        symspell.load_complete_model_from_json(json_url, encoding="ISO-8859-1")
+
+        # do preprocess
+        result = []
+        for tweet in list_tweets:
+            id, text = tweet[0], tweet[1]
+
+            # normalize
+            tweet_norm = normalizer.remove_ascii_unicode(text)
+            tweet_norm = normalizer.remove_rt_fav(tweet_norm)
+            tweet_norm = normalizer.lower_text(tweet_norm)
+            tweet_norm = normalizer.remove_newline(tweet_norm)
+            tweet_norm = normalizer.remove_url(tweet_norm)
+            tweet_norm = normalizer.remove_emoticon(tweet_norm)
+            tweet_norm = normalizer.remove_hashtag_mention(tweet_norm)
+            tweet_norm = normalizer.remove_punctuation(tweet_norm)
+
+            # tokenize
+            tweet_tok = tokenizer.WordTokenize(tweet_norm, removepunct=True)
+
+            # spell correction
+            temp = []
+            for token in tweet_tok:
+                suggestion = symspell.lookup(phrase=token, verbosity=1, max_edit_distance=3)
+
+                # option if there is no suggestion
+                if len(suggestion) > 0:
+                    get_suggestion = str(suggestion[0]).split(':')[0]
+                    temp.append(get_suggestion)
+                else:
+                    temp.append(token)
+            tweet_prepared = ' '.join(temp)
+
+            # join attraction with strip
+            tweet_prepared = normalizer.join_attraction(tweet_prepared, list_attractions)
+
+            id_tweet_prepared = [id, tweet_prepared]
+            result.append(id_tweet_prepared)
+
+        # insert into table preprocess
+        for res in result:
+            id, text = res[0], res[1]
+
+            tb_preprocess = Preprocess()
+            tb_preprocess.text = text
+            tb_preprocess.tweet_id = id
+            tb_preprocess.crawler_id = crawler.id
+            db.session.add(tb_preprocess)
+            db.session.commit()
+
+    return render_template('dump.html', form_stweets=form_stweets)
+
+
 @bp.route('/process', methods=['GET', 'POST'])
 def process():
     selectedChoices = ChoiceObj('attractions', session.get('selected'))

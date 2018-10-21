@@ -1,37 +1,74 @@
-{% extends "base.html" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
-{% block app_content %}
-<div id="loading"></div>
-<div id="content">
-  {% if form_splace %}
-  <div style="margin-bottom: 20px;">
-    {{ wtf.quick_form(form_splace, form_type="inline", action="attractions", button_map={'search_place':'default'}) }}
-  </div>
-  {% endif %}
-  {% if form_stweets %}
-  <div class="row">
-    <div class="col-md-4">
-      <form method="post" action="{{ url_for('main.process') }}">
-        {{ form_stweets.hidden_tag() }}
-        <div class="form-group pre-scrollable" style="max-height: 42vh;">
-          {{ render_mutiple_checkbox_field(form_stweets.multi_attractions) }}
-        </div>
-        <div class="form-group">
-          {{ render_field(form_stweets.range_dist, class="form-control") }}
-        </div>
-        <div class="form-group">
-          {{ render_field(form_stweets.days_before, class="form-control") }}
-        </div>
-        <button class="btn btn-primary btn-block btn-lg" data-toggle="modal" data-target="#demo-modal-2">
-          Get Stories
-        </button>
-      </form>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/fixes.html" as fixes %}
+{% from "_formhelpers.html" import render_field, render_mutiple_checkbox_field %}
+
+{% block title %}
+{{ _('Storytelling Twitter') }}
+{% endblock %}
+
+{% block head %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
+<script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{{ url_for('main.index') }}">{{ _('Storytelling Twitter') }}</a>
     </div>
-    <div class="col-md-8">
-      {% include '_maps.html' %}
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('main.index') }}">{{ _('Home') }}</a></li>
+        <li><a href="{{ url_for('main.stories') }}">{{ _('Stories') }}</a></li>
+      </ul>
     </div>
   </div>
-  {% endif %}
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div id="loading"></div>
+  <div id="content">
+    {% if form_splace %}
+    <div style="margin-bottom: 20px;">
+      {{ wtf.quick_form(form_splace, form_type="inline", action="attractions", button_map={'search_place':'default'}) }}
+    </div>
+    {% endif %}
+    {% if form_stweets %}
+    <div class="row">
+      <div class="col-md-4">
+        <form method="post" action="{{ url_for('main.result') }}">
+          {{ form_stweets.hidden_tag() }}
+          <div class="form-group pre-scrollable" style="max-height: 42vh;">
+            {{ render_mutiple_checkbox_field(form_stweets.multi_attractions) }}
+          </div>
+          <div class="form-group">
+            {{ render_field(form_stweets.range_dist, class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ render_field(form_stweets.days_before, class="form-control") }}
+          </div>
+          <button class="btn btn-primary btn-block btn-lg" data-toggle="modal" data-target="#demo-modal-2">
+            Get Stories
+          </button>
+        </form>
+      </div>
+      <div class="col-md-8">
+        {% include '_maps.html' %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
