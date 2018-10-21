@@ -228,6 +228,8 @@ def result():
                 tid_text = [tweet_id, text]
                 result.append(tid_text)
             else:
+                if len(text.split(' ')) == 1:
+                    text = text + ' ini'
                 out = tokenize.sentence_extraction(tokenize.cleaning(text))
                 join_word = []
                 for o in out:
