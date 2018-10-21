@@ -10,7 +10,7 @@ PLACES = ['Klenteng', 'Kawasan']
 SEPARATOR = [',', '-', '|']
 
 class TwitterCrawler:
-    'module for twitter crawling'
+    '''module for twitter crawling'''
 
     def __init__(self, app):
         self.__ACCESS_TOKEN = app.config['TWITTER_ACCESS_TOKEN']
