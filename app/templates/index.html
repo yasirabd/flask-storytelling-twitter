@@ -11,7 +11,9 @@
 {% block head %}
 {{super()}}
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='style.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
 {% endblock %}
 
 {% block navbar %}
@@ -37,8 +39,8 @@
 {% endblock %}
 
 {% block content %}
+<!-- <div id="loading" class="loading-image" style="display:none;">Loading!</div> -->
 <div class="container">
-  <div id="loading"></div>
   <div id="content">
     {% if form_splace %}
     <div style="margin-bottom: 20px;">
@@ -59,7 +61,7 @@
           <div class="form-group">
             {{ render_field(form_stweets.days_before, class="form-control") }}
           </div>
-          <button class="btn btn-primary btn-block btn-lg" data-toggle="modal" data-target="#demo-modal-2">
+          <button type="submit" id="btnStory" class="btn btn-primary btn-block btn-lg" data-loading-text="<i class='fa fa-spinner fa-spin'></i> Pembentukan Storytelling">
             Get Stories
           </button>
         </form>
@@ -71,4 +73,17 @@
     {% endif %}
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script type="text/javascript">
+function story(ev){
+  // ev.preventDefault();
+  $("#btnStory").button('loading');
+}
+$("#btnStory").click(story);
+</script>
 {% endblock %}

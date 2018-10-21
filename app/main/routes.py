@@ -96,6 +96,7 @@ def result():
         df_attractions = twitter_crawler.fetch_tweets_from_attractions(attractions, int(days_before), float(latitude),
                                                                        float(longitude), int(range_dist), place_name)
 
+        # if data from crawling less than 20, return notification
         if len(df_attractions) < 20:
             return render_template('notification.html')
 
